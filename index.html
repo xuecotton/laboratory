@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/element.css">
+    <title>实验平台</title>
+    <style>
+        /* [v-cloak] {
+      display: none !important;
+    } */
+        .el-carousel__item img {
+            color: #475669;
+            font-size: 18px;
+            opacity: 0.75;
+            line-height: 300px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        .el-carousel__button {
+            width: 20px;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .el-tabs__active-bar {
+            width: 36px !important;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .el-tabs__nav-wrap::after {
+            background-color: #ffffff;
+        }
+
+        .el-tabs__item {
+            font-size: 18px;
+        }
+        .el-select-dropdown{
+            z-index: 10000 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body" id="app">
+        <!-- nav_start -->
+        <header class="nav">
+            <div class="nav_con">
+                <div class="logo">
+                    <a href="#">
+                        <img src="./img/logo.png" alt="">
+                    </a>
+                </div>
+                <ul class="nav_list">
+                    <li>
+                        <a href="#" class="active">首页</a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            实验中心
+                        </a>
+                    </li>
+                </ul>
+                <div class="search">
+                    <label class="input">
+                        <input type="text" maxlength="100" class="Input" placeholder="请输入实验名称" value="">
+                        <button>
+                            <span>搜索</span>
+                        </button>
+                    </label>
+                </div>
+                <div class="right_nav">
+                    <a href="#p1" class="login_d">登录</a>
+                    <a href="#p2" class="login_z">注册</a>
+                </div>
+            </div>
+        </header>
+        <!-- nav_end -->
+        <!-- banner_start -->
+        <div class="banner">
+            <template>
+                <el-carousel :interval="5000" arrow="always">
+                    <el-carousel-item>
+                        <img src="./img/banner.png" alt="">
+                    </el-carousel-item>
+                    <el-carousel-item>
+                        <img src="./img/banner.png" alt="">
+                    </el-carousel-item>
+                    <el-carousel-item>
+                        <img src="./img/banner.png" alt="">
+                    </el-carousel-item>
+                    <el-carousel-item>
+                        <img src="./img/banner.png" alt="">
+                    </el-carousel-item>
+                </el-carousel>
+            </template>
+        </div>
+        <!-- banner_end -->
+        <!-- list_start -->
+        <div class="con">
+            <ul class="list">
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/1.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/2.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/3.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/4.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/2.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/3.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/1.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="../img/3.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/4.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/2.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/1.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="list_con">
+                    <a href="#" class="link">
+                        <div class="img">
+                            <img src="./img/3.png" alt="">
+                        </div>
+                        <div class="doc">
+                            <h2>
+                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
+                            </h2>
+                            <div class="t_t">
+                                <div class="collage">
+                                    智能制造
+                                </div>
+                                <div class="num">
+                                    <i></i>
+                                    <div class="n">
+                                        1963
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <a href="#" class="button">
+                <span>
+                    查看更多
+                </span>
+                <span class="arrow">
+                    <i></i>
+                </span>
+            </a>
+        </div>
+        <footer class="footer">
+            版权所有：华北水利水电大学 | 豫ICP备05002494-1 | 豫公网安备 41010702002321号
+        </footer>
+        <!-- 登录框开始 -->
+        <div class="login_box" id="p1">
+            <div class="login_con">
+                <template>
+                    <el-tabs v-model="activeName" @tab-click="handleClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="log_stu">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" style="">
+                                            账号或密码错误，请重新输入！
+                                        </div>
+                                        <div class="forget_err" style="display: none;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div class="log_btn">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="./reg.html">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="log_tea">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" style="">
+                                            账号或密码错误，请重新输入！
+                                        </div>
+                                        <div class="forget_err" style="display: none;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div class="log_btn">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="./reg.html">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_d"></div>
+            </div>
+        </div>
+        <!-- 登录框结束 -->
+        <!-- 注册框开始 -->
+        <div class="zhu_box" id="p2">
+            <div class="zhu_con">
+                <template>
+                    <el-tabs v-model="activeName" @tab-click="handleClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="zhu_stu">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入真实姓名">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入学号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码">
+                                </div>
+                                <div class="zhu_btn">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="zhu_tea">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入真实姓名">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入学号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码">
+                                </div>
+                                <div class="zhu_btn">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_z"></div>
+            </div>
+        </div>
+        <!-- 注册框结束 -->
+    </div>
+</body>
+<script src="./js/vue.js"></script>
+<script src="./js/element.js"></script>
+<script src="./js/jquery-1.12.4.js"></script>
+<script src="./js/index.js"></script>
+<script>
+    $('.login_d').click(function () {
+        $('#p1').css('display', 'block');
+    })
+    $('.login_z').click(function () {
+        $('#p2').css('display', 'block');
+    })
+</script>
+
+</html>

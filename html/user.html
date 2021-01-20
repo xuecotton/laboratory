@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/user.css">
+    <link rel="stylesheet" href="../css/element.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="header">
+            <div class="header_box">
+                <div class="logo">
+                    <img src="../img/logo.png" alt="">
+                </div>
+                <ul class="nav">
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">实验中心</a></li>
+                </ul>
+                <div class="user">
+                    <div class="author">
+                        <img src="../img/touxiang.jpg" alt="">
+                    </div>
+                    <div class="uname">
+                        用户名
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <el-tabs :tab-position="tabPosition">
+                <el-tab-pane label="个人信息">
+                    <div class="barbox">
+                        <div class="title">
+                            <span>个人信息</span>
+                        </div>
+                        <div class="content_chenge">
+                            <a class="tabbar1 tab1_act">基本信息</a>
+                            <a class="tabbar1">密码管理</a>
+                        </div>
+                        <div id="one" class="user_info tab_con1">
+                            <div class="info_con">
+                                <ul>
+                                    <li>姓名：***</li>
+                                    <li>工号：1433223</li>
+                                    <li>手机号：13855555831 <a class='no_btn'>修改</a></li>
+                                    <li class="submit_btn">
+                                        <div class="info_conform">确认</div>
+                                        <div class="info_cancal">取消</div>
+                                    </li>
+                                </ul>
+                                <div class="avatar">
+                                    <el-avatar shape="square" :size="50" src="../img/ys.jpg">
+                                    </el-avatar>
+
+                                    <!-- <el-avatar shape="square" :size="50" v-if="imageUrl" :src="imageUrl"
+                                        src="../img/ys.jpg"></el-avatar> -->
+
+                                    <el-upload class="no_btn" action="https://jsonplaceholder.typicode.com/posts/"
+                                        :show-file-list="false" :on-success="handleAvatarSuccess"
+                                        :before-upload="beforeAvatarUpload">上传头像
+                                    </el-upload>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="two" class="user_info tab_con1 hidden">
+                            <div class="info_con">
+
+                                <ul>
+                                    <li><span>旧密码：</span><input type="password"></li>
+                                    <li><span>新密码：</span><input type="password"></li>
+                                    <li><span>确认新密码：</span><input type="password"></li>
+                                    <li><i class="pwTips">密码由8-16位字符（字母、数字、_@#.特殊字符）组成!</i></li>
+                                    <li class="submit_btn">
+                                        <div class="info_conform">保存</div>
+                                        <div class="info_cancal">取消</div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="题库">
+                    <div class="barbox" v-if="showTestList">
+                        <div class="title">
+                            <span>题库</span>
+                            <div class="test_btn">
+                                <div class="handleBtn">批量删除</div>
+                                <div class="handleBtn" @click="showTestList=false">新建<img src="../img/add_j.png"
+                                        alt=""><img src="../img/add_m.png" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="testTable">
+                            <div class="istable">
+                                <el-table stripe ref="multipleTable" :data="tableData" tooltip-effect="dark"
+                                    style="width: 100%" @selection-change="handleSelectionChange">
+                                    <el-table-column type="selection" width="55">
+                                    </el-table-column>
+                                    <el-table-column type="index" label="序号" width="50">
+                                    </el-table-column>
+                                    <el-table-column label="题目" width="120">
+                                        <template slot-scope="scope">{{ scope.row.date }}</template>
+                                    </el-table-column>
+                                    <el-table-column prop="name" label="题量" width="120">
+                                    </el-table-column>
+                                    <el-table-column prop="address" label="出题人" show-overflow-tooltip>
+                                    </el-table-column>
+                                    <el-table-column prop="address" label="创建日期" show-overflow-tooltip>
+                                    </el-table-column>
+                                    <el-table-column prop="address" label="状态" show-overflow-tooltip>
+                                    </el-table-column>
+                                    <el-table-column label="操作">
+                                        <template slot-scope="scope">
+                                            <el-tooltip class="item" effect="dark" content="发布" placement="top">
+                                                <i class="el-icon-s-promotion icon"></i>
+                                            </el-tooltip>
+                                            <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                                                <i class='el-icon-edit-outline icon'></i>
+                                            </el-tooltip>
+                                            <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                                                <i class='el-icon-delete icon'></i>
+                                            </el-tooltip>
+                                        </template>
+                                    </el-table-column>
+
+                                </el-table>
+                                <div class="page">
+                                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                        :page-size="100" layout="prev, pager, next, jumper" :total="1000">
+                                    </el-pagination>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="notable">
+                                    <img src="../img/touxiang.jpg" alt="">
+                                    <div>无题库列表</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barbox" v-if="!showTestList">
+                        <div class="title">
+                            <div class="back" @click="showTestList=true"><img src="../img/back.png" alt=""></div>
+
+                            <div class="test_btn">
+                                <div class="total_score">
+                                    已创建题目<span>12</span> 道，总分 <span>60</span> 分
+                                </div>
+                                <div class="handleBtn">提交<img src="../img/submit.png" alt=""><img
+                                        src="../img/submit.png" alt=""></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="我的实验">
+                    <div class="barbox" v-if="showExperList">
+                        <div class="title">
+                            <span>我的实验</span>
+                            <div class="test_btn">
+                                <div class="handleBtn" @click="showExperList=false">新建<img src="../img/add_j.png"
+                                        alt=""><img src="../img/add_m.png" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="testTable">
+                            <div class="istable">
+                                <el-table stripe ref="multipleTable" :data="tableData1" tooltip-effect="dark"
+                                    style="width: 100%" @selection-change="handleSelectionChange">
+
+                                    <el-table-column align="center" label="实验" width="300">
+                                        <template slot-scope="props">
+                                            <div class="exper_thumb">
+                                                <div class="exper_thumb_box">
+                                                    <img src="../img/banner.png" alt="">
+                                                </div>
+                                                <div class="exper_thumb_name">{{props.row.expname}}</div>
+                                            </div>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column align="center" prop="expname" label="小组名称" width="180">
+                                    </el-table-column>
+                                    <el-table-column align="center" prop="barcode" label="实验码" show-overflow-tooltip>
+                                    </el-table-column>
+                                    <el-table-column align="center" prop="date" label="时间">
+                                    </el-table-column>
+                                    <el-table-column align="center" prop="status" label="状态" show-overflow-tooltip>
+                                    </el-table-column>
+                                    <el-table-column align="center" label="操作">
+                                        <template slot-scope="scope">
+                                            <el-tooltip class="item" effect="dark" content="发布" placement="top">
+                                                <i class="el-icon-s-promotion icon"></i>
+                                            </el-tooltip>
+                                            <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                                                <i class='el-icon-edit-outline icon'></i>
+                                            </el-tooltip>
+                                            <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                                                <i class='el-icon-delete icon'></i>
+                                            </el-tooltip>
+                                        </template>
+                                    </el-table-column>
+
+                                </el-table>
+                                <div class="page">
+                                    <el-pagination background @size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange" :page-size="100"
+                                        layout="prev, pager, next, jumper" :total="1000">
+                                    </el-pagination>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="notable">
+                                    <img src="../img/touxiang.jpg" alt="">
+                                    <div>暂无实验</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barbox" v-if="!showExperList">
+                        <div class="title">
+                            <div class="back" @click="showExperList=true"><img src="../img/back.png" alt=""></div>
+
+                            <div class="test_btn">
+                                <div class="handleBtn">发布<img src="../img/submit.png" alt=""><img
+                                        src="../img/submit.png" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="exper_content">
+                            <div class="exper_list">
+                                <ul>
+                                    <li><span>选择实验：</span>
+                                        <div class="show_exper_thump" @click="showExpListDiaFun">
+                                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                        </div>
+                                    </li>
+                                    <li><span>小组名称：</span>
+                                        <div class='exper_team_input'><input type="text" placeholder="请输入小组名称"></div>
+                                    </li>
+                                    <li><span>实验时间：</span>
+                                        <el-date-picker type="daterange" v-model="value1" clear-icon='el-icon-date'
+                                            range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+                                        </el-date-picker>
+                                    </li>
+                                    <li><span>实验要求：</span>
+                                        <div class="exper_request">
+                                            <ul>
+                                                <li><span>1.</span>实验报告</li>
+                                                <li>
+                                                    <span class="plachlr_span"></span>
+                                                    <el-upload class="upload-demo"
+                                                        action="https://jsonplaceholder.typicode.com/posts/"
+                                                        :on-preview="handlePreview" :on-remove="handleRemove"
+                                                        :before-remove="beforeRemove" multiple :limit="3"
+                                                        :on-exceed="handleExceed" :file-list="fileList">
+                                                        <div class="light_btn">点击上传</div>
+                                                        <!-- <el-button size="small" type="primary"></el-button> -->
+                                                        <div slot="tip" class="el-upload__tip">只能上传docx文件，且大小不能超过3M
+                                                        </div>
+                                                    </el-upload>
+                                                </li>
+                                                <li>
+                                                    <span>2.</span> 试卷
+                                                </li>
+                                                <li>
+                                                    <span class="plachlr_span"></span>
+                                                    <div class="light_btn">选择试卷</div>
+                                                </li>
+                                                <li v-for="(i,k) in request">
+                                                    <span>{{i.title+2}}.</span>
+                                                    <el-input type="textarea" :rows="2" placeholder="请输入内容"
+                                                        v-model="textarea" v-model="i.content">
+                                                    </el-input>
+                                                    <div class="dark_btn">删除</div>
+                                                </li>
+                                                <li>
+                                                    <span class="plachlr_span"></span>
+                                                    <div class="light_btn">添加要求</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li><span>实验分数：</span>
+                                        <div class="exper_sum_score">
+                                            <div class="weight_title">
+                                                <div class="weight_item">
+                                                    <span>实验报告成绩</span>
+                                                </div>
+
+                                                <div v-for="i in 4" class="weight_item">
+                                                    +<span>实验报告</span>
+                                                </div>
+                                                <div class="weight_item">
+                                                    =<span>100%</span>
+                                                </div>
+                                            </div>
+                                            <div class="weight_score">
+                                                <div class="weight_item">
+                                                    <input type="text">%
+                                                </div>
+                                                <div v-for="i in 4" class="weight_item">
+                                                    +<input type="text">%
+                                                </div>
+                                                <div class="weight_item">
+                                                    =<span>100%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                    <li>
+                                        <div class="light2_btn mr_75">保存</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="成绩管理">
+                    <div class="barbox">
+                        <div class="title">
+                            <span>成绩管理</span>
+                        </div>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+            <el-dialog title="实验中心" :close-on-click-modal='false' width="800px" :visible.sync="showExperListDialog"
+                center>
+                <div class="exp_list_search">
+                    <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="value1">
+                        <div class="exp_search_bar" slot="append">搜索</div>
+                    </el-input>
+                </div>
+                <div class="exp_list_box">
+                    <div class="exp_item " v-for='item in 9' @click="show(item)" :class="index==item?'exp_item_act':''">
+                        <div class="exp_item_img">
+                            <img src="../img/fs.jpg" alt="">
+                            <span class="icon_no_select"></span>
+                        </div>
+                        <div class="exp_item_title">实验名称名称写这里实验名称名称写这里</div>
+                        <i class="el-icon-success"></i>
+                    </div>
+
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="showExperListDialog = false">取 消</el-button>
+                    <el-button type="primary" @click="showExperListDialog = false">确 定</el-button>
+                </span>
+            </el-dialog>
+
+        </div>
+    </div>
+</body>
+
+
+
+<script src="../js/vue.js"></script>
+<script src="../js/element.js"></script>
+<script src="../js/jquery-1.12.4.js"></script>
+<script type='module' src="../js/user.js"></script>
+<script>
+
+</script>
+<style>
+
+</style>
+
+</html>
