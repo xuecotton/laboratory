@@ -11,6 +11,52 @@ var app = new Vue({
             type: ''
         },
         showExperListDialog: false, //选择实验列表
+        showTestListDialog: false,//选择题库列表
+        radio: "",
+        testList: [
+            {
+                index: '1',
+                title: "道家百日筑基功法静坐修道与长生不老",
+                createDate: "前221-10-15",
+                author: "至游子",
+            },
+            {
+                index: '2',
+                title: "静坐修道与长生不老",
+                createDate: "前559-10-11",
+                author: "南怀瑾",
+            },
+            {
+                index: '3',
+                title: "中国炼丹术考略",
+                createDate: "前187-8-15",
+                author: "容志毅",
+            },
+            {
+                index: '4',
+                title: "中国炼丹术考略",
+                createDate: "前187-8-15",
+                author: "容志毅",
+            },
+            {
+                index: '5',
+                title: "中国炼丹术考略",
+                createDate: "前187-8-15",
+                author: "容志毅",
+            },
+            {
+                index: '6',
+                title: "中国炼丹术考略",
+                createDate: "前187-8-15",
+                author: "容志毅",
+            },
+            {
+                index: '7',
+                title: "中国炼丹术考略",
+                createDate: "前187-8-15",
+                author: "容志毅",
+            },
+        ],
         value1: '',
         index: '',
         request: [
@@ -126,10 +172,13 @@ var app = new Vue({
         },
         show(item) {
             this.index = item;
-            this.imageUrl = '../img/ys.jpg'
+            this.imageUrl = '../img/fs.jpg'
         },
         showExpListDiaFun() {
             this.showExperListDialog = true;
+        },
+        show_test_list_dioag() {
+            this.showTestListDialog = true;
         }
 
     }

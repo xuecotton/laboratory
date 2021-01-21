@@ -78,6 +78,10 @@ ol {
   color: #222222;
 }
 
+.header .header_box .nav li a:hover {
+  color: #00B1FB;
+}
+
 .header .header_box .user {
   /* width: 100px; */
   height: 65px;
@@ -385,6 +389,12 @@ ol {
 
 .testTable {
   height: 667px;
+  /*
+ .istable {
+     display: none;
+
+ }
+ */
 }
 
 .testTable .notable {
@@ -594,6 +604,7 @@ ol {
   background-color: #00b1fb;
   border-radius: 2px;
   text-align: center;
+  cursor: pointer;
 }
 
 .mr_75 {
@@ -644,15 +655,18 @@ ol {
 }
 
 /*弹出实验列表框样式开始*/
-.exp_list_search {
+.xp_list_search {
   width: 265px;
   height: 30px;
   background-color: #ffffff;
   border-radius: 3px;
   float: right;
+  /*
+     .exp_search_bar {}
+    */
 }
 
-.exp_list_search .el-input-group__append {
+.xp_list_search .el-input-group__append {
   height: 30px;
   color: #fff;
   cursor: pointer;
@@ -764,4 +778,21 @@ ol {
   z-index: 0;
 }
 
-/*弹出实验列表框样式结束*/
+/*题库列表弹出框样式*/
+.test_list_title {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.test_list_title .el-radio {
+  margin: 0;
+}
+
+.test_list_title .el-radio .el-radio__inner {
+  border-radius: 0;
+}
+
+.test_list_title .el-radio .el-radio__inner:after {
+  border-radius: 0;
+}

@@ -89,6 +89,10 @@ ol {
                     letter-spacing: 0px;
                     color: #222222;
                 }
+
+                a:hover {
+                    color: #00B1FB;
+                }
             }
         }
 
@@ -406,10 +410,12 @@ ol {
 .testTable {
     height: 667px;
 
-    .istable {
-        // display: none;
-   
-    }
+ /*
+ .istable {
+     display: none;
+
+ }
+ */
 
     .notable {
         width: 183px;
@@ -631,6 +637,7 @@ ol {
     background-color: #00b1fb;
     border-radius: 2px;
     text-align: center;
+    cursor: pointer;
 }
 
 .mr_75 {
@@ -683,18 +690,16 @@ ol {
 }
 
 /*弹出实验列表框样式开始*/
-.el-dialog__title{
-    font-family: SourceHanSansCN-Bold;
-    font-size: 16px;
-    font-weight: 600px;
-.exp_list_search {
+.xp_list_search {
     width: 265px;
     height: 30px;
     background-color: #ffffff;
     border-radius: 3px;
     float: right;
 
-    .exp_search_bar {}
+    /*
+     .exp_search_bar {}
+    */
 
     .el-input-group__append {
         height: 30px;
@@ -809,3 +814,21 @@ ol {
     z-index: 0;
 }
 
+/*题库列表弹出框样式*/
+.test_list_title {
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .el-radio {
+        margin: 0;
+
+        .el-radio__inner {
+            border-radius: 0;
+        }
+
+        .el-radio__inner:after {
+            border-radius: 0;
+        }
+    }
+}
