@@ -32,6 +32,24 @@ ol {
   display: none;
 }
 
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+#app {
+  position: relative;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+}
+
+main {
+  width: 100%;
+  padding-bottom: 88px;
+}
+
+/*头部样式开始*/
 .header {
   width: 100%;
   height: 65px;
@@ -110,10 +128,44 @@ ol {
   color: #333333;
 }
 
+/*头部样式结束*/
+/*尾部样式开始*/
+.footer {
+  width: 100%;
+  height: 88px;
+  position: absolute;
+  bottom: 0;
+  clear: both;
+  background-color: #1c1f21;
+}
+
+.footer .foot_content {
+  width: 1200px;
+  height: 88px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #9199a1;
+}
+
+.footer .foot_content span {
+  display: block;
+  margin: 0 5px;
+}
+
+.footer .foot_content a {
+  display: block;
+  color: #9199a1;
+}
+
+/*尾部样式结束*/
 .main {
   width: 1200px;
   height: auto;
-  margin: 0 auto;
+  margin: 0 auto 100px;
+  padding-bottom: 88px;
 }
 
 .main .el-tabs--right {
@@ -196,7 +248,6 @@ ol {
 
 .content_chenge a {
   display: inline-block;
-  width: 64px;
   height: 60px;
   line-height: 62px;
   margin-left: 20px;
@@ -795,4 +846,219 @@ ol {
 
 .test_list_title .el-radio .el-radio__inner:after {
   border-radius: 0;
+}
+
+.fl_r {
+  float: right;
+  line-height: 62px;
+  margin-right: 20px;
+}
+
+.correct_box {
+  padding: 0 20px;
+}
+
+.correct_box .list_topic_type {
+  height: 60px;
+  display: flex;
+  line-height: 60px;
+}
+
+.correct_box .list_topic_type li {
+  margin: 0 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.correct_box .list_topic_type li span {
+  color: #ff0000;
+}
+
+.corr_item .corr_tle {
+  font-size: 16px;
+  line-height: 45px;
+  font-weight: 500;
+}
+
+.corr_item .corr_ans {
+  width: 950px;
+  box-sizing: border-box;
+  border: solid 1px #dddddd;
+  line-height: 25px;
+  margin: 10px 0;
+  padding: 5px;
+}
+
+.view_report, .corr_score {
+  line-height: 60px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 20px;
+}
+
+.view_report input, .corr_score input {
+  width: 60px;
+  height: 28px;
+  border: solid 1px #dddddd;
+}
+
+.view_report a {
+  color: #00b1fb;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.view_report a:hover {
+  color: #0398d6;
+}
+
+.save_btn, .save_radio_test {
+  display: flex;
+  flex-direction: row;
+}
+
+.save_btn div, .save_radio_test div {
+  width: 78px;
+  height: 30px;
+  margin-left: 20px;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  background-color: #00b1fb;
+  color: #fff;
+  border-radius: 2px;
+}
+
+.save_btn div:hover, .save_radio_test div:hover {
+  background-color: #0398d6;
+}
+
+/*
+创建题库样式
+*/
+.test_create {
+  border-top: 2px solid #ddd;
+}
+
+.radio_test, .item_options {
+  margin: 20px;
+}
+
+.radio_test ul > li, .item_options ul > li {
+  font-size: 16px;
+  line-height: 45px;
+  display: flex;
+}
+
+.radio_test ul > li span, .item_options ul > li span {
+  display: inline-block;
+  font-weight: 600;
+  width: 80px;
+}
+
+.item_score input {
+  width: 30px;
+  height: 27px;
+  background-color: #f9f9f9;
+  border: solid 1px #dddddd;
+}
+
+.item_tit {
+  width: 800px;
+  height: 46px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  border: solid 1px #dddddd;
+}
+
+.item_options {
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 800px;
+  height: 342px;
+  border: solid 1px #dddddd;
+}
+
+.item_options ul > li > span {
+  width: 20px;
+}
+
+.item_options ul > li:last-child > div {
+  padding: 0 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background: #00b1fb;
+  color: #fff;
+  line-height: 35px;
+  height: 35px;
+}
+
+.item_options ul > li:last-child > div :hover {
+  background-color: #0398d6;
+}
+
+.item_options .options_con {
+  width: 690px;
+  height: 30px;
+  border: 1px solid #ddd;
+}
+
+.item_options .options_con + div {
+  width: 50px;
+  height: 30px;
+  margin-left: 10px;
+  text-align: center;
+  cursor: pointer;
+  line-height: 30px;
+  border-radius: 2px;
+  border: solid 1px #dddddd;
+}
+
+.num_list {
+  width: 800px;
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid #ddd;
+}
+
+.num_list .num_item {
+  width: 23px;
+  height: 20px;
+  margin: 10px;
+  cursor: pointer;
+  line-height: 20px;
+  border: solid 1px #dddddd;
+  text-align: center;
+  border: 1px solid #ddd;
+  position: relative;
+}
+
+.num_list .num_item i {
+  display: none;
+  font-size: 16px;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+}
+
+.num_item:hover > i {
+  display: block;
+}
+
+.right_option {
+  width: 800px;
+}
+
+.el-radio__inner, .el-radio__input, .el-radio__label {
+  border-radius: 0;
+  width: 14px !important;
+}
+
+.el-radio {
+  margin-right: 10px;
+}
+
+.save_radio_test div {
+  margin-left: 0;
 }
