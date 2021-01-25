@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>教师个人中心</title>
     <link rel="stylesheet" href="../css/element.css">
-    <link rel="stylesheet" href="../css/user.css">
+    <link rel="stylesheet" href="../css/tecUserCenter.css">
 </head>
 
 <body>
@@ -22,12 +22,20 @@
                     <li><a href="#">实验中心</a></li>
                 </ul>
                 <div class="user">
-                    <div class="author">
-                        <img src="../img/touxiang.jpg" alt="">
-                    </div>
-                    <div class="uname">
-                        用户名
-                    </div>
+                    <el-dropdown :hide-on-click="false" @command="handleCommand">
+                        <div class="hea">
+                            <div class="head_portrait">
+                                <img :src="user_msg.head_portrait" alt="" />
+                            </div>
+                            <div class="info">{{user_msg.teacher_name}}</div>
+                        </div>
+                        <div class="submenu">
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="a">个人中心</el-dropdown-item>
+                                <el-dropdown-item command="b">退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </div>
+                    </el-dropdown>
                 </div>
             </div>
         </div>
@@ -42,28 +50,26 @@
                             <div class="content_chenge">
                                 <a class="tabbar1 tab1_act">基本信息</a>
                                 <a class="tabbar1">密码管理</a>
+                                <a class="tabbar1">手机号管理</a>
                             </div>
                             <div id="one" class="user_info tab_con1">
                                 <div class="info_con">
                                     <ul>
-                                        <li>姓名：***</li>
-                                        <li>工号：1433223</li>
-                                        <li>手机号：13855555831 <a class='no_btn'>修改</a></li>
+                                        <li>姓名：{{user_msg.teacher_name}}</li>
+                                        <li>工号：{{user_msg.teacher_id}}</li>
+                                        <li>手机号：{{user_msg.iphone}}<a class='no_btn'>修改</a></li>
                                         <li class="submit_btn">
-                                            <div class="info_conform">确认</div>
+                                            <div class="info_conform" @click="saveUserInfo">确认</div>
                                             <div class="info_cancal">取消</div>
                                         </li>
                                     </ul>
                                     <div class="avatar">
-                                        <el-avatar shape="square" :size="50" src="../img/ys.jpg">
+                                        <el-avatar shape="square" :size="50" :src="user_msg.head_portrait">
                                         </el-avatar>
 
-                                        <!-- <el-avatar shape="square" :size="50" v-if="imageUrl" :src="imageUrl"
-                                            src="../img/ys.jpg"></el-avatar> -->
-
-                                        <el-upload class="no_btn" action="https://jsonplaceholder.typicode.com/posts/"
-                                            :show-file-list="false" :on-success="handleAvatarSuccess"
-                                            :before-upload="beforeAvatarUpload">上传头像
+                                        <el-upload ref="upload" :before-upload="beforeAvatarUpload" class="no_btn"
+                                            :action="formUploadUrl" :on-success="handleAvatarSuccess"
+                                            :show-file-list="false">上传头像
                                         </el-upload>
                                     </div>
 
@@ -73,13 +79,30 @@
                                 <div class="info_con">
 
                                     <ul>
-                                        <li><span>旧密码：</span><input type="password"></li>
-                                        <li><span>新密码：</span><input type="password"></li>
-                                        <li><span>确认新密码：</span><input type="password"></li>
+                                        <li><span>旧密码：</span><input type="password" v-model="pswForm.old_password"></li>
+                                        <li><span>新密码：</span><input type="password" @blur="pswblur(1)"
+                                                v-model="pswForm.new_password"></li>
+                                        <li><span>确认新密码：</span><input type="password" @blur="pswblur(2)"
+                                                v-model="pswForm.confirm_password"></li>
                                         <li><i class="pwTips">密码由8-16位字符（字母、数字、_@#.特殊字符）组成!</i></li>
                                         <li class="submit_btn">
-                                            <div class="info_conform">保存</div>
-                                            <div class="info_cancal">取消</div>
+                                            <div class="info_conform" @click="editPassword">保存</div>
+                                            <!-- <div class="info_cancal">取消</div> -->
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </div>
+                            <div class="user_info tab_con1 hidden">
+                                <div class="info_con">
+
+                                    <ul>
+                                        <li><span>请验证密码：</span><input type="password" v-model="phoneForm.password"></li>
+                                        <li><span>新手机号：</span><input v-model="phoneForm.iphone"></li>
+
+                                        <li class="submit_btn">
+                                            <div class="info_conform" @click="editPhone">保存</div>
+                                            <!-- <div class="info_cancal">取消</div> -->
                                         </li>
                                     </ul>
 
@@ -87,6 +110,7 @@
                             </div>
                         </div>
                     </el-tab-pane>
+
                     <el-tab-pane label="题库">
                         <div class="barbox" v-if="showTestList">
                             <div class="title">
@@ -532,7 +556,10 @@
 <script src="../js/vue.js"></script>
 <script src="../js/element.js"></script>
 <script src="../js/jquery-1.12.4.js"></script>
-<script type='module' src="../js/user.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../js/pub.js"></script>
+<script type='module' src="../js/tecUserCenter.js"></script>
+
 <script type="text/javascript" src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script>
 <style>
 

@@ -2,9 +2,30 @@ import TabChange from './common.js'
 var app = new Vue({
     el: '#app',
     data: {
+        // 教师信息
+        user_msg: "",
+        userInfo: {
+            user_id: "UI3C1Jdst3vcc",
+
+        },
+        // 修改密码表单
+        pswForm: {
+            old_password: "",
+            new_password: "",
+            confirm_password: ""
+        },
+        // 修改手机号表单
+        phoneForm: {
+            password: '',
+            iphone: ''
+        },
+        canIUseEditPass: true,
+        fileList1: [],
+
         tabPosition: 'right',
         options: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
         imageUrl: '',
+        formUploadUrl: baseURL + pub._DetailApi.uploadPic,
         formLabelAlign: {
             name: '',
             region: '',
@@ -209,17 +230,178 @@ var app = new Vue({
         }
 
     },
+    created() {
+        this.init()
+    },
     methods: {
-        handleAvatarSuccess() { },
-        beforeAvatarUpload() { },
+        init: function () {
+            sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo))
+            // 判断session状态是否登陆，未登录跳转到主页
+            var ssinfo = JSON.parse(sessionStorage.getItem('userInfo'));
+            if (null !== ssinfo || "" !== ssinfo) {
+                this.user_id = ssinfo
+                var teaInfo = {
+                    _url: pub._url,
+                    ur: pub._DetailApi.TeaInfo,
+                    data: this.user_id,
+                    cbk: this.getTeaInfo,
+                }
+                pub._InitAjax(teaInfo);
+            } else {
+                window.location.href = "../index.html"
+            }
+        },
+        // 获取信息回调
+        getTeaInfo(res) {
+            console.log(res);
+            res.data.head_portrait = res.data.head_portrait.replace(/^/, baseURL)
+            this.user_msg = res.data;
+            console.log(this.user_msg, "++msg");
+        },
+        // 头像上传
+        beforeAvatarUpload(file) {
+
+            const isJPG = (file.type === 'image/jpeg' || file.type === "image/png");
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+                this.$message.error('上传头像图片只能是 jpg/png 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
+        },
+        handleAvatarSuccess(res, file) {
+            this.imageUrl = URL.createObjectURL(file.raw);
+            this.user_msg.head_portrait = res.data.src
+            this.$message({
+                message: '上传成功',
+                type: 'success'
+            })
+        },
+        saveUserInfo() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.editTeaInfo,
+                data: { "head_portrait": _this.user_msg.head_portrait, "user_id": _this.userInfo.user_id },
+                cbk: function (res) {
+                    if (res.code == 200) {
+                        _this.init()
+                    }
+                },
+                cat: function (cat) {
+                    this.$message({
+                        message: '修改失败',
+                        type: 'info'
+                    })
+                }
+
+            });
+        },
+
+
+        // 修改密码
+        editPassword() {
+            var _this = this;
+            if (!this.canIUseEditPass) {
+                this.$message.error('密码格式错误或两次密码输入不一致');
+            } else {
+
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.editPassword,
+                    data: { ..._this.pswForm, "user_id": _this.userInfo.user_id },
+                    cbk: function (res) {
+                        if (res.code == 200) {
+                            _this.$message({
+                                message: '修改成功，请重新登录',
+                                type: 'success'
+                            })
+                            sessionStorage.removeItem('userInfo');
+                            window.location.href = "../index.html"
+                        } else if (res.code == 400) {
+                            _this.$message(res.msg)
+                        }
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '修改失败',
+                            type: 'info'
+                        })
+                    }
+
+                });
+            }
+        },
+        // 密码验证
+        pswblur(val) {
+            if (val == 1) {//判断正则
+                let regex = new RegExp('^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{8,30}$');
+                if (!regex.test(this.pswForm.new_password)) {
+                    this.canIUseEditPass = false;
+                    this.$message.error('密码不符合规范，请检查后重新输入！');
+                } else if (this.pswForm.new_password == this.pswForm.old_password) {
+                    this.canIUseEditPass = false;
+                    this.$message.error('新密码不能与旧密码相同！');
+                }
+            } else {
+                if (this.pswForm.confirm_password != this.pswForm.new_password) {
+                    this.canIUseEditPass = false;
+                    this.$message.error('两次密码输入不一致！');
+                }
+            }
+        },
+        // 修改手机号
+        editPhone() {
+            var _this = this;
+            let regIphone = new RegExp("^[1]([3-9])[0-9]{9}$");
+            if (!regIphone.test(this.phoneForm.iphone)) {
+                this.$message.error('手机号格式不正确，请重新输入！');
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.editPhone,
+                    data: { ..._this.phoneForm, "user_id": _this.userInfo.user_id },
+                    cbk: function (res) {
+                        if (res.code == 200) {
+                            _this.$message({
+                                message: '修改成功',
+                                type: 'success'
+                            })
+                            _this.phoneForm = {
+                                password: '',
+                                iphone: ''
+                            }
+                        } else if (res.code == 400) {
+                            _this.$message(res.msg)
+                        }
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '修改失败',
+                            type: 'info'
+                        })
+                    }
+
+                });
+            }
+
+        },
+        handleCommand() { },
+
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },
+        handlePreview1(file) {
+            console.log(file.url);
+        },
         handlePreview(file) {
-            console.log(file);
+            console.log(file.url);
         },
         handleExceed(files, fileList) {
             this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
