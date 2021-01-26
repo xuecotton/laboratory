@@ -1083,3 +1083,12 @@ main {
 .red {
   color: red;
 }
+
+.el-message-box {
+  border-radius: 0;
+}
+
+.el-message-box__title {
+  font-weight: 600;
+  font-size: 18px;
+}

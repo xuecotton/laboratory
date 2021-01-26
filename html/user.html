@@ -57,10 +57,11 @@
                                     <ul>
                                         <li>姓名：{{user_msg.teacher_name}}</li>
                                         <li>工号：{{user_msg.teacher_id}}</li>
-                                        <li>手机号：{{user_msg.iphone}}<a class='no_btn'>修改</a></li>
+                                        <!-- <li>手机号：{{user_msg.iphone}}<a class='no_btn'>修改</a></li> -->
+                                        <li>手机号：{{user_msg.iphone}}</li>
                                         <li class="submit_btn">
-                                            <div class="info_conform" @click="saveUserInfo">确认</div>
-                                            <div class="info_cancal">取消</div>
+                                            <!-- <div class="info_conform" @click="saveUserInfo">确认</div>
+                                            <div class="info_cancal">取消</div> -->
                                         </li>
                                     </ul>
                                     <div class="avatar">
@@ -117,51 +118,78 @@
                                 <span>题库</span>
                                 <div class="test_btn">
                                     <div class="handleBtn">批量删除</div>
-                                    <div class="handleBtn" @click="showTestList=false">新建<img src="../img/add_j.png"
-                                            alt=""><img src="../img/add_m.png" alt=""></div>
+                                    <div class="handleBtn" @click="createQ">新建<img src="../img/add_j.png" alt=""><img
+                                            src="../img/add_m.png" alt=""></div>
                                 </div>
                             </div>
                             <div class="testTable">
                                 <div class="istable">
-                                    <el-table stripe ref="multipleTable" :data="tableData" tooltip-effect="dark"
+                                    <el-table stripe ref="multipleTable" :data="Q_list" tooltip-effect="dark"
                                         style="width: 100%" @selection-change="handleSelectionChange">
                                         <el-table-column type="selection" width="55">
                                         </el-table-column>
                                         <el-table-column type="index" label="序号" width="50">
                                         </el-table-column>
-                                        <el-table-column label="题目" width="120">
-                                            <template slot-scope="scope">{{ scope.row.date }}</template>
+                                        <el-table-column label="题目" align="center" width="120">
+                                            <template slot-scope="scope">{{ scope.row.question_bank_name }}</template>
                                         </el-table-column>
-                                        <el-table-column prop="name" label="题量" width="120">
+                                        <el-table-column prop="question_count" align="center" label="题量" width="120">
                                         </el-table-column>
-                                        <el-table-column prop="address" label="出题人" show-overflow-tooltip>
+                                        <el-table-column prop="teacher_name" align="center" label="出题人"
+                                            show-overflow-tooltip :render-header="renderProductId">
                                         </el-table-column>
-                                        <el-table-column prop="address" label="创建日期" show-overflow-tooltip>
+                                        <el-table-column prop="create_time" align="center" label="创建日期"
+                                            show-overflow-tooltip>
                                         </el-table-column>
-                                        <el-table-column prop="address" label="状态" show-overflow-tooltip>
+                                        <el-table-column align="center" label="状态" show-overflow-tooltip>
+                                            <template slot-scope="scope">{{ scope.row.question_status==0?'待发布':已发布
+                                                }}</template>
                                         </el-table-column>
-                                        <el-table-column label="操作">
+                                        <el-table-column label="操作" align="center">
                                             <template slot-scope="scope">
-                                                <el-tooltip class="item" effect="dark" content="发布" placement="top">
-                                                    <i class="el-icon-s-promotion icon"></i>
+                                                <el-tooltip v-if="scope.row.question_status==0" class="item"
+                                                    effect="dark" content="发布" placement="top">
+                                                    <i class="el-icon-s-promotion icon" @click="submitQ(scope.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                                                    <i class='el-icon-edit-outline icon'></i>
+                                                <el-tooltip v-if="scope.row.question_status==0" class="item"
+                                                    effect="dark" content="编辑" placement="top">
+                                                    <i class='el-icon-edit-outline icon' @click="editQ(scope.row)"></i>
                                                 </el-tooltip>
                                                 <el-tooltip class="item" effect="dark" content="删除" placement="top">
-                                                    <i class='el-icon-delete icon'></i>
+                                                    <i class='el-icon-delete icon' @click="delQ(scope.row)"></i>
                                                 </el-tooltip>
+                                                <el-tooltip v-if="scope.row.question_status==1" class="item"
+                                                    effect="dark" content="撤回" placement="top">
+                                                    <i class='el-icon-document-delete icon'
+                                                        @click="backQ(scope.row)"></i>
+                                                </el-tooltip>
+
                                             </template>
                                         </el-table-column>
 
                                     </el-table>
                                     <div class="page">
                                         <el-pagination @size-change="handleSizeChange"
-                                            @current-change="handleCurrentChange" :page-size="100"
-                                            layout="prev, pager, next, jumper" :total="1000">
+                                            @current-change="handleCurrentChange" :page-size="QpageSize"
+                                            layout="prev, pager, next, jumper" :total="Qtotal">
                                         </el-pagination>
                                     </div>
                                 </div>
+
+                                <el-dialog :title="EditQtitle" :close-on-click-modal='false' :visible.sync="showEditQ"
+                                    width="500px" center>
+
+                                    <el-input v-model="editQvalue" placeholder="请输入内容">
+                                        <template slot="prepend">题库名称：</template>
+                                    </el-input>
+                                    <span slot="footer" class="dialog-footer">
+                                        <el-button @click="showEditQ = false">取 消</el-button>
+                                        <el-button v-if="EditQtitle=='修改名称'" type="primary" @click="confirmEditQ">确 定
+                                        </el-button>
+                                        <el-button v-if="EditQtitle=='新建题库'" type="primary" @click="confirmcreateQ">确 定
+                                        </el-button>
+                                    </span>
+                                </el-dialog>
                                 <div>
                                     <div class="notable">
                                         <img src="../img/touxiang.jpg" alt="">
@@ -560,7 +588,7 @@
 <script src="../js/pub.js"></script>
 <script type='module' src="../js/tecUserCenter.js"></script>
 
-<script type="text/javascript" src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script>
+<!-- <script type="text/javascript" src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script> -->
 <style>
 
 </style>

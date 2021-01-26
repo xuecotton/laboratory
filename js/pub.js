@@ -60,6 +60,17 @@ var pub = {
     editTeaInfo: "teacher/editTeacher",//修改教师信息
     editPassword: "teacher/editPassword",//修改密码
     editPhone: "teacher/editTeacherIphone",//修改手机号
+
+
+    // 题库管理
+    QListPage: "questionBank/questionBankListPage",//题库分页列表
+    allQList: "questionBank/allQuestionBankList",//所有题库列表
+    submitQ: "questionBank/submitQuestionBank",//题库提交（发布）
+    recallQ: "questionBank/recallQuestionBank",//题库撤回
+    saveQ: "questionBank/saveQuestionBank",//新增题库
+    editQ: "questionBank/editQuestionBank",//修改题库
+    delQ: "questionBank/delQuestionBank",//删除题库
+
   },
 
   /**
