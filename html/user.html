@@ -65,9 +65,8 @@
                                         </li>
                                     </ul>
                                     <div class="avatar">
-                                        <el-avatar shape="square" :size="50" :src="user_msg.head_portrait">
-                                        </el-avatar>
 
+                                        <img :src="user_msg.head_portrait">
                                         <el-upload ref="upload" :before-upload="beforeAvatarUpload" class="no_btn"
                                             :action="formUploadUrl" :on-success="handleAvatarSuccess"
                                             :show-file-list="false">上传头像
@@ -123,7 +122,7 @@
                                 </div>
                             </div>
                             <div class="testTable">
-                                <div class="istable">
+                                <div class="istable" v-if="Q_list.length>0">
                                     <el-table stripe ref="multipleTable" :data="Q_list" tooltip-effect="dark"
                                         style="width: 100%" @selection-change="handleSelectionChange">
                                         <el-table-column type="selection" width="55">
@@ -142,26 +141,34 @@
                                             show-overflow-tooltip>
                                         </el-table-column>
                                         <el-table-column align="center" label="状态" show-overflow-tooltip>
-                                            <template slot-scope="scope">{{ scope.row.question_status==0?'待发布':已发布
+                                            <template slot-scope="scope">{{
+                                                scope.row.question_bank_status | stuFilter
                                                 }}</template>
                                         </el-table-column>
                                         <el-table-column label="操作" align="center">
                                             <template slot-scope="scope">
-                                                <el-tooltip v-if="scope.row.question_status==0" class="item"
-                                                    effect="dark" content="发布" placement="top">
+                                                <el-tooltip
+                                                    v-if="scope.row.user_id==userInfo.user_id && scope.row.question_bank_status==0"
+                                                    class="item" effect="dark" content="发布" placement="top">
                                                     <i class="el-icon-s-promotion icon" @click="submitQ(scope.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip v-if="scope.row.question_status==0" class="item"
-                                                    effect="dark" content="编辑" placement="top">
+                                                <el-tooltip
+                                                    v-if="scope.row.user_id==userInfo.user_id && scope.row.question_bank_status==0"
+                                                    class="item" effect="dark" content="编辑" placement="top">
                                                     <i class='el-icon-edit-outline icon' @click="editQ(scope.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                                                <el-tooltip v-if="scope.row.user_id==userInfo.user_id " class="item"
+                                                    effect="dark" content="删除" placement="top">
                                                     <i class='el-icon-delete icon' @click="delQ(scope.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip v-if="scope.row.question_status==1" class="item"
-                                                    effect="dark" content="撤回" placement="top">
+                                                <el-tooltip
+                                                    v-if="scope.row.user_id==userInfo.user_id && scope.row.question_bank_status==1"
+                                                    class="item" effect="dark" content="撤回" placement="top">
                                                     <i class='el-icon-document-delete icon'
                                                         @click="backQ(scope.row)"></i>
+                                                </el-tooltip>
+                                                <el-tooltip class="item" effect="dark" content="预览" placement="top">
+                                                    <i class='el-icon-view icon' @click="preView(scope.row)"></i>
                                                 </el-tooltip>
 
                                             </template>
@@ -171,11 +178,18 @@
                                     <div class="page">
                                         <el-pagination @size-change="handleSizeChange"
                                             @current-change="handleCurrentChange" :page-size="QpageSize"
-                                            layout="prev, pager, next, jumper" :total="Qtotal">
+                                            layout="total,prev, pager, next" :total="Qtotal">
                                         </el-pagination>
                                     </div>
                                 </div>
 
+
+                                <div v-if="Q_list.length==0">
+                                    <div class="notable">
+                                        <img src="../img/bank.png" alt="">
+                                        <div>无题库列表</div>
+                                    </div>
+                                </div>
                                 <el-dialog :title="EditQtitle" :close-on-click-modal='false' :visible.sync="showEditQ"
                                     width="500px" center>
 
@@ -184,18 +198,12 @@
                                     </el-input>
                                     <span slot="footer" class="dialog-footer">
                                         <el-button @click="showEditQ = false">取 消</el-button>
-                                        <el-button v-if="EditQtitle=='修改名称'" type="primary" @click="confirmEditQ">确 定
-                                        </el-button>
+                                        <!-- <el-button v-if="EditQtitle=='修改名称'" type="primary" @click="confirmEditQ">确 定
+                                        </el-button> -->
                                         <el-button v-if="EditQtitle=='新建题库'" type="primary" @click="confirmcreateQ">确 定
                                         </el-button>
                                     </span>
                                 </el-dialog>
-                                <div>
-                                    <div class="notable">
-                                        <img src="../img/touxiang.jpg" alt="">
-                                        <div>无题库列表</div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="barbox" v-if="!showTestList">
@@ -298,59 +306,75 @@
                             <div class="title">
                                 <span>我的实验</span>
                                 <div class="test_btn">
-                                    <div class="handleBtn" @click="showExperList=2">新建<img src="../img/add_j.png"
-                                            alt=""><img src="../img/add_m.png" alt=""></div>
+                                    <div class="handleBtn" @click="toAddE">新建<img src="../img/add_j.png" alt=""><img
+                                            src="../img/add_m.png" alt=""></div>
                                 </div>
                             </div>
                             <div class="testTable">
-                                <div class="istable">
-                                    <el-table stripe ref="multipleTable" :data="tableData1" tooltip-effect="dark"
+                                <div class="istable" v-if="ExperList.length>0">
+                                    <el-table stripe ref="multipleTable" :data="ExperList" tooltip-effect="dark"
                                         style="width: 100%" @selection-change="handleSelectionChange">
-
                                         <el-table-column align="center" label="实验" width="300">
                                             <template slot-scope="props">
                                                 <div class="exper_thumb">
                                                     <div class="exper_thumb_box">
                                                         <img src="../img/banner.png" alt="">
                                                     </div>
-                                                    <div class="exper_thumb_name">{{props.row.expname}}</div>
+                                                    <div class="exper_thumb_name">{{props.row.experiment_name}}</div>
                                                 </div>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column align="center" prop="expname" label="小组名称" width="180">
+                                        <el-table-column align="center" prop="experiment_group_name" label="小组名称"
+                                            width="180">
                                         </el-table-column>
-                                        <el-table-column align="center" prop="barcode" label="实验码"
+                                        <el-table-column align="center" prop="experiment_code" label="实验码"
                                             show-overflow-tooltip>
                                         </el-table-column>
-                                        <el-table-column align="center" prop="date" label="时间">
+                                        <el-table-column align="center" prop="start_time" label="开始时间">
                                         </el-table-column>
-                                        <el-table-column align="center" prop="status" label="状态" show-overflow-tooltip>
+                                        <el-table-column align="center" prop="end_time" label="结束时间">
+                                        </el-table-column>
+                                        <el-table-column align="center" label="状态" show-overflow-tooltip>
+                                            <template slot-scope="scope">{{
+                                                scope.row.experiment_status | stuFilter
+                                                }}</template>
                                         </el-table-column>
                                         <el-table-column align="center" label="操作">
                                             <template slot-scope="props">
-                                                <el-tooltip class="item" effect="dark" content="发布" placement="top">
-                                                    <i class="el-icon-s-promotion icon"></i>
+                                                <el-tooltip class="item" v-if="props.row.experiment_status=='0'"
+                                                    effect="dark" content="发布" placement="top">
+                                                    <i class="el-icon-s-promotion icon" @click="submitE(props.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                                                    <i class='el-icon-edit-outline icon'></i>
+                                                <el-tooltip class="item" v-if="props.row.experiment_status=='0'"
+                                                    effect="dark" content="编辑" placement="top">
+                                                    <i class='el-icon-edit-outline icon' @click="toAddE(props.row)"></i>
                                                 </el-tooltip>
                                                 <el-tooltip class="item" effect="dark" content="删除" placement="top">
-                                                    <i class='el-icon-delete icon'></i>
+                                                    <i class='el-icon-delete icon'
+                                                        @click="delAndBackE(props.row,0)"></i>
+                                                </el-tooltip>
+                                                <el-tooltip class="item" effect="dark" content="查看详情" placement="top">
+                                                    <i class='el-icon-document-checked icon'
+                                                        @click="checkE(props.row)"></i>
+                                                </el-tooltip>
+                                                <el-tooltip class="item" v-if="props.row.experiment_status=='1'"
+                                                    effect="dark" content="撤回" placement="top">
+                                                    <i class='el-icon-document-delete icon'
+                                                        @click="delAndBackE(props.row,1)"></i>
                                                 </el-tooltip>
                                             </template>
                                         </el-table-column>
-
                                     </el-table>
                                     <div class="page">
-                                        <el-pagination background @size-change="handleSizeChange"
-                                            @current-change="handleCurrentChange" :page-size="100"
-                                            layout="prev, pager, next, jumper" :total="1000">
+                                        <el-pagination background @size-change="handleSizeChange1"
+                                            @current-change="handleCurrentChange1" :page-size="EpageSize"
+                                            layout="total,prev, pager, next" :total="Etotal">
                                         </el-pagination>
                                     </div>
                                 </div>
-                                <div>
+                                <div v-else>
                                     <div class="notable">
-                                        <img src="../img/touxiang.jpg" alt="">
+                                        <img src="../img/bank.png" alt="">
                                         <div>暂无实验</div>
                                     </div>
                                 </div>
@@ -450,7 +474,7 @@
 
                                         </li>
                                         <li>
-                                            <div class="light2_btn mr_75" v-for="i in 15">保存</div>
+                                            <div class="light2_btn mr_75">保存</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -504,6 +528,60 @@
                             </div>
 
                         </div>
+                        <div class="barbox" v-if="showExperList==4">
+                            <div class="title">
+                                <div class="back" @click="showExperList=1"><img src="../img/back.png" alt=""></div>
+                                <span style="border: none;">实验小组名称</span>
+                                <div class="test_btn">
+                                </div>
+                            </div>
+                            <div class="testTable">
+                                <div class="istable" v-if="StudentList.length>0">
+                                    <el-table stripe ref="multipleTable" :data="StudentList" tooltip-effect="dark"
+                                        style="width: 100%">
+
+                                        <el-table-column align="center" prop="experiment_group_name" label="小组名称"
+                                            width="180">
+                                        </el-table-column>
+                                        <el-table-column align="center" prop="experiment_code" label="实验码"
+                                            show-overflow-tooltip>
+                                        </el-table-column>
+                                        <el-table-column align="center" prop="start_time" label="开始时间">
+                                        </el-table-column>
+                                        <el-table-column align="center" prop="end_time" label="结束时间">
+                                        </el-table-column>
+                                        <el-table-column align="center" label="状态" show-overflow-tooltip>
+                                            <template slot-scope="scope">{{
+                                                scope.row.experiment_status | stuFilter
+                                                }}</template>
+                                        </el-table-column>
+                                        <el-table-column align="center" label="操作">
+                                            <template slot-scope="props">
+                                                <el-tooltip class="item" effect="dark" content="批改" placement="top">
+                                                    <i class='el-icon-edit-outline icon'
+                                                        @click="editStu(props.row)"></i>
+                                                </el-tooltip>
+                                                <el-tooltip class="item" effect="dark" content="踢出小组" placement="top">
+                                                    <i class='el-icon-delete icon' @click="delStu(props.row)"></i>
+                                                </el-tooltip>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                    <div class="page">
+                                        <el-pagination background @size-change="handleSizeChange3"
+                                            @current-change="handleCurrentChange3" :page-size="StupageSize"
+                                            layout="total,prev, pager, next" :total="Stutotal">
+                                        </el-pagination>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div class="notable">
+                                        <img src="../img/bank.png" alt="">
+                                        <div>暂无实验</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </el-tab-pane>
 
                     <el-tab-pane label="成绩管理">
@@ -519,21 +597,27 @@
                 <el-dialog title="实验中心" :close-on-click-modal='false' width="800px" :visible.sync="showExperListDialog"
                     center>
                     <div class="exp_list_search">
-                        <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="value1">
-                            <div class="exp_search_bar" slot="append">搜索</div>
+                        <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="selectExp"
+                            @enter="showExpListDiaFun">
+                            <div class="exp_search_bar" slot="append" @click="showExpListDiaFun">搜索</div>
                         </el-input>
                     </div>
                     <div class="exp_list_box">
-                        <div class="exp_item " v-for='item in 9' @click="show(item)"
+                        <div class="exp_item " v-for='(item,index) in expList' @click="show(item,index)"
                             :class="index==item?'exp_item_act':''">
                             <div class="exp_item_img">
-                                <img src="../img/fs.jpg" alt="">
+                                <img :src="item.experiment_pic | addBaseurl" alt="">
                                 <span class="icon_no_select"></span>
                             </div>
-                            <div class="exp_item_title">实验名称名称写这里实验名称名称写这里</div>
+                            <div class="exp_item_title">{{item.experiment_name}}</div>
                             <i class="el-icon-success"></i>
                         </div>
-
+                        <div class="page">
+                            <el-pagination background @size-change="handleSizeChange2"
+                                @current-change="handleCurrentChange2" :page-size="expageSize"
+                                layout="total,prev, pager, next" :total="exptotal">
+                            </el-pagination>
+                        </div>
                     </div>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="showExperListDialog = false">取 消</el-button>

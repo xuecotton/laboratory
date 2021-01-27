@@ -62,6 +62,8 @@ var pub = {
     editPhone: "teacher/editTeacherIphone",//修改手机号
 
 
+    ExperListPage: "experiment/experimentListPage",//实验分页列表
+
     // 题库管理
     QListPage: "questionBank/questionBankListPage",//题库分页列表
     allQList: "questionBank/allQuestionBankList",//所有题库列表
@@ -70,7 +72,19 @@ var pub = {
     saveQ: "questionBank/saveQuestionBank",//新增题库
     editQ: "questionBank/editQuestionBank",//修改题库
     delQ: "questionBank/delQuestionBank",//删除题库
+    previewQ: 'questionBank/findQuestionBankInfo',//预览试卷
 
+    saveE: "group/saveExperimentGroup",//新增实验小组
+    editE: "group/editExperimentGroup",//修改实验小组
+    ExperList: "group/experimentGroupListPageT",//（我的实验小组列表分页）
+    delE: "group/delExperimentGroup",//删除实验小组
+    selectE: "group/selectExperimentGroupInfoById",//查询实验小组
+    submitE: "group/submitExperimentGroup",//发布实验小组
+    recallE: "group/recallExperimentGroup",//撤回实验小组
+    listGroupStu: 'group/experimentGroupMemberScore',//列表小组内的学生
+    delStudent: "group/delExperimentGroupMember",//老师踢学生
+
+    addgroup: "group/saveExperimentGroupMember",//学生加进小组
   },
 
   /**
