@@ -84,7 +84,10 @@ var pub = {
     listGroupStu: 'group/experimentGroupMemberScore',//列表小组内的学生
     delStudent: "group/delExperimentGroupMember",//老师踢学生
 
+
     addgroup: "group/saveExperimentGroupMember",//学生加进小组
+
+
   },
 
   /**

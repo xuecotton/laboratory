@@ -20,21 +20,13 @@ var app = new Vue({
             iphone: ''
         },
         canIUseEditPass: true,
-        list: [
-            {
-                "question_count": null,
-                "question_bank_name": "试卷1",
-                "teacher_name": "zrj",
-                "create_time": "2021-01-20 09:49:22",
-                "uuid": "2ab833d1e79c404eb44aa2cfe8e6c511",
-                "question_bank_id": "QB5HL0BN0sG5",
-                "question_status": "0"
-            }
-        ],
 
-        confirmTips: "",
-        // 假题库列表数据
 
+
+
+
+
+        // 题库列表数据
         Q_list: [],//题库分页列表
         QpageSize: 5,
         QpageNum: 1,
@@ -54,10 +46,41 @@ var app = new Vue({
         EpageSize: 5,
         EpageNum: 1,
         Etotal: 0,
-
-        ExperContent: "", //用来存实验小组具体内容和要求的:编辑页面要用
+        confirmTips: "",//删除小组是的提示信息。
+        // 新增要求类型字典
+        requestTypeList: [
+            {
+                label: "实验报告",
+                value: 1,
+            }, {
+                label: "试卷",
+                value: 2,
+            }, {
+                label: "实验操作",
+                value: 3,
+            }, {
+                label: "其他",
+                value: 4,
+            }
+        ],
+        // 新增要求类型
+        requestType: '',
+        ExperContent: {
+            experiment_group_id: "",
+            experiment_group_name: "",
+            experiment_id: "",
+            experiment_name: "",
+            experiment_status: "",
+            experiment_pic: "",
+            start_time: "",
+            end_time: ""
+        }, //用来存实验小组具体内容和要求的:编辑页面要用
+        ExpRequire: "",
         groupId: "",//用来存实验小组id 来查看学生列表，跳转时用
-
+        groupName: "",//实验小组名称，展示用
+        start_time: '',
+        end_time: '',
+        isFromNewAdd: true,//是否从新增按钮跳到创建实验小组页面的
 
         // 小组学生相关
         StudentList: "",//小组成员列表
@@ -72,8 +95,10 @@ var app = new Vue({
         exptotal: 0,
         selectExp: '',
 
-        // 选中的实验内容
-        actExpItem: '',
+        // 选中实验需要的变量
+        actExpItem: "",//选中的实验详情内容
+        actExpMiddle: '',//中间过渡量
+        actExpIndex: "",//选中的实验索引
 
 
         tabPosition: 'right',
@@ -115,7 +140,10 @@ var app = new Vue({
             },
         ],
         value1: '',
-        index: '',
+        value2: '',
+        demo1: "",
+        demo2: "",
+        // index: '',
         request: [
             { title: 1, content: "" },
             { title: 2, content: "" }
@@ -141,9 +169,13 @@ var app = new Vue({
     created() {
         this.init();
         this.getExperList();
-
+        console.log(this.actExpItem, this.actExpIndex);
     },
     methods: {
+
+        /**
+         * @用户信息模块
+         */
         init: function () {
             var _this = this;
             sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo))
@@ -209,9 +241,6 @@ var app = new Vue({
             });
 
         },
-
-
-
         // 修改密码
         editPassword() {
             var _this = this;
@@ -308,13 +337,23 @@ var app = new Vue({
                 }
             }
         },
+
+
+
+        /**
+         * @题库模块
+         */
         // 请求题库分页列表
         getQlistPage() {
             var _this = this;
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.QListPage,
-                data: { "pageSize": _this.QpageSize, "pageNum": this.QpageNum, "user_id": _this.onlyMyselfQ },
+                data: {
+                    "pageSize": _this.QpageSize,
+                    "pageNum": this.QpageNum,
+                    "user_id": _this.onlyMyselfQ
+                },
                 cbk: function (res) {
                     _this.Q_list = res.page.list;
                     _this.Qtotal = res.page.totalCount;
@@ -337,7 +376,6 @@ var app = new Vue({
             this.getQlistPage();
             // console.log(`当前页: ${val}`);
         },
-
         // 题库列表操作(表头渲染一个选项框)
         renderProductId(h, { column }) {
             return h('span', [
@@ -379,7 +417,10 @@ var app = new Vue({
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: pub._DetailApi.saveQ,
-                    data: { "user_id": _this.userInfo.user_id, "question_bank_name": _this.editQvalue },
+                    data: {
+                        "user_id": _this.userInfo.user_id,
+                        "question_bank_name": _this.editQvalue
+                    },
                     cbk: function (res) {
                         _this.showEditQ = false; //关闭弹框
                         _this.editQvalue = "";
@@ -395,14 +436,15 @@ var app = new Vue({
             }
 
         },
-
         // 题库提交
         submitQ(row) {
             var _this = this;
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.submitQ,
-                data: { "question_bank_id": row.question_bank_id },
+                data: {
+                    "question_bank_id": row.question_bank_id
+                },
                 cbk: function (res) {
                     _this.$confirm('发布成功！您已经可以在创建实验小组时选择该题库作为测试题。', "提示", {
                         confirmButtonText: '确定',
@@ -460,6 +502,7 @@ var app = new Vue({
         //     }
 
         // },
+
         // 题库删除
         delQ(row) {
             var _this = this;
@@ -472,7 +515,9 @@ var app = new Vue({
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: pub._DetailApi.delQ,
-                    data: { "question_bank_id": row.question_bank_id },
+                    data: {
+                        "question_bank_id": row.question_bank_id
+                    },
                     cbk: function (res) {
                         _this.getQlistPage();
                     },
@@ -503,7 +548,9 @@ var app = new Vue({
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: pub._DetailApi.recallQ,
-                    data: { "question_bank_id": row.question_bank_id },
+                    data: {
+                        "question_bank_id": row.question_bank_id
+                    },
                     cbk: function (res) {
                         _this.$message({
                             message: '撤回成功',
@@ -532,18 +579,20 @@ var app = new Vue({
         },
 
 
-
-
-
-
-
+        /**
+         * @实验小组模块
+         */
         // 实验小组列表
         getExperList() {
             var _this = this;
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.ExperList,
-                data: { "pageSize": _this.EpageSize, "pageNum": this.EpageNum, "user_id": _this.userInfo.user_id },
+                data: {
+                    "pageSize": _this.EpageSize,
+                    "pageNum": this.EpageNum,
+                    "user_id": _this.userInfo.user_id
+                },
                 cbk: function (res) {
                     _this.ExperList = res.page.list;
                     _this.Etotal = res.page.totalCount;
@@ -567,14 +616,20 @@ var app = new Vue({
             this.getQlistPage();
             // console.log(`当前页: ${val}`);
         },
-        // 选择实验列表
+        // 查询实验列表
         showExpListDiaFun() {
             var _this = this;
             this.showExperListDialog = true;
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.ExperListPage,
-                data: { "pageSize": _this.expageSize, "pageNum": this.expageNum, "experiment_id": "", "search_data": _this.selectExp, "category_one_id": "" },
+                data: {
+                    "pageSize": _this.expageSize,
+                    "pageNum": this.expageNum,
+                    "experiment_id": "",
+                    "search_data": _this.selectExp,
+                    "category_one_id": ""
+                },
                 cbk: function (res) {
                     _this.expList = res.page.list;
                     _this.exptotal = res.page.totalCount;
@@ -587,7 +642,7 @@ var app = new Vue({
                 }
             });
         },
-        // 选择实验列表分页
+        // 查询实验列表分页
         handleSizeChange2(val) {
             this.expageSize = val;
             this.showExpListDiaFun();
@@ -598,18 +653,108 @@ var app = new Vue({
             this.showExpListDiaFun();
             // console.log(`当前页: ${val}`);
         },
+        // 从查询的实验列表选择实验
+        selectExpItem(item, index) {
+            this.actExpIndex = item.experiment_id;//选中
+            this.actExpMiddle = item; //中间过渡量接收到
 
+        },
+        // 确认选择
+        confirmSelExpItem() {
+            this.showExperListDialog = false;//关闭对话框
+            this.actExpItem = this.actExpMiddle; //拿到过渡量
+        },
         // 去新增、编辑实验小组内容页面
         toAddE(row) {
             this.showExperList = 2;
             // this. ExperContent = res
             if (row.experiment_group_id) {
-                this.ExperContent = "有"
-                console.log(this.ExperContent);
+                this.isFromNewAdd = false;//告知我不是新增按钮进来的，是从编辑按钮进来的
+                // 发送请求
+                var _this = this;
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.selectE,
+                    data: {
+                        "experiment_group_id": row.experiment_group_id
+                    },
+                    cbk: function (res) {
+                        console.log(res);
+                        let {
+                            experiment_group_id,
+                            experiment_group_name,
+                            experiment_id,
+                            experiment_name,
+                            experiment_status,
+                            experiment_pic,
+                            start_time,
+                            end_time
+                        } = { ...res.data };
+
+                        _this.ExperContent = {
+                            experiment_group_id,
+                            experiment_group_name,
+                            experiment_id,
+                            experiment_name,
+                            experiment_status,
+                            experiment_pic,
+                            start_time,
+                            end_time
+                        };
+                        _this.ExpRequire = res.data.experiment_require;
+                        console.log(_this.ExpRequire);
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '请求失败',
+                            type: 'info'
+                        })
+                    }
+                });
+
             } else {
-                this.ExperContent = "没有"
-                console.log(this.ExperContent);
+                this.ExperContent = {
+                    experiment_group_id: "",
+                    experiment_group_name: "",
+                    experiment_id: "",
+                    experiment_name: "",
+                    experiment_status: "",
+                    experiment_pic: "",
+                    start_time: "",
+                    end_time: ""
+                },
+                    console.log(this.ExperContent);
             }
+        },
+        // 保存 或 修改 实验小组
+        saveOrEditGroup() {
+            var _this = this;
+            console.log({ ..._this.ExperContent, "user_id": _this.userInfo.user_id, "experiment_require": _this.ExpRequire });
+            if (!_this.isFromNewAdd) {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.editE,
+                    data: {
+                        ..._this.ExperContent,
+                        "user_id": _this.userInfo.user_id,
+                        "experiment_require": _this.ExpRequire
+                    },
+                    cbk: function (res) {
+                        _this.showExperList = 1;
+                        _this.$message({
+                            message: '保存成功,去发布！',
+                            type: 'success'
+                        })
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '操作失败',
+                            type: 'info'
+                        })
+                    }
+                });
+            }
+
         },
 
         // 发布小组
@@ -624,7 +769,9 @@ var app = new Vue({
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: pub._DetailApi.submitE,
-                    data: { "experiment_group_id": row.experiment_group_id },
+                    data: {
+                        "experiment_group_id": row.experiment_group_id
+                    },
                     cbk: function (res) {
                         _this.$confirm('发布成功！实验码：' + res.code, "提示", {
                             confirmButtonText: '确定',
@@ -662,6 +809,7 @@ var app = new Vue({
         checkE(row) {
             this.showExperList = 4;
             this.groupId = row.experiment_group_id;
+            this.groupName = row.experiment_group_name;
             this.getStuList();
         },
         // 删除小组,撤回小组
@@ -681,7 +829,9 @@ var app = new Vue({
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: val ? pub._DetailApi.recallE : pub._DetailApi.delE,
-                    data: { "experiment_group_id": row.experiment_group_id },
+                    data: {
+                        "experiment_group_id": row.experiment_group_id
+                    },
                     cbk: function (res) {
                         _this.getExperList();
                         _this.$message({
@@ -711,7 +861,11 @@ var app = new Vue({
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.listGroupStu,
-                data: { "pageSize": _this.StupageSize, "pageNum": this.StupageNum, "experiment_group_id": _this.groupId },
+                data: {
+                    "pageSize": _this.StupageSize,
+                    "pageNum": this.StupageNum,
+                    "experiment_group_id": _this.groupId
+                },
                 cbk: function (res) {
                     _this.StudentList = res.page.list;
                     _this.Stutotal = res.page.totalCount;
@@ -743,24 +897,40 @@ var app = new Vue({
         // 把学生提出去
         delStu(row) {
             var _this = this;
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: pub._DetailApi.delStudent,
-                data: { "user_id": row.student_id, "experiment_group_id": _this.groupId },
-                cbk: function (res) {
-                    _this.$message({
-                        message: '删除成功',
-                        type: 'success'
-                    })
-                    _this.getStuList()
-                },
-                cat: function (cat) {
-                    _this.$message({
-                        message: '删除失败',
-                        type: 'info'
-                    })
-                }
-            });
+            _this.$confirm("确定将该学生踢出实验小组吗？踢出后将清空该学生包括答题在内的操作内容", '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'danger',
+                center: true
+            }).then(() => {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.delStudent,
+                    data: {
+                        "user_id": row.user_id,
+                        "experiment_group_id": _this.groupId
+                    },
+                    cbk: function (res) {
+                        _this.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                        _this.getStuList()
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '删除失败',
+                            type: 'info'
+                        })
+                    }
+                });
+            }).catch(() => {
+                _this.$message({
+                    message: '取消操作',
+                    type: 'info'
+                })
+            })
+
         },
 
         handleCommand() { },
@@ -778,15 +948,14 @@ var app = new Vue({
             console.log(file.url);
         },
         handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            this.$message.warning(
+                `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`
+            );
         },
         beforeRemove(file, fileList) {
             return this.$confirm(`确定移除 ${file.name}？`);
         },
-        show(item) {
-            this.index = item;
-            this.imageUrl = '../img/fs.jpg'
-        },
+
 
         show_test_list_dioag() {
             this.showTestListDialog = true;

@@ -157,7 +157,8 @@ main {
     height: 40px;
     border-radius: 50%;
     overflow: hidden;
-    background: #000;
+
+    // background: #000;
 }
 
 /*头部样式结束*/
@@ -585,7 +586,7 @@ main {
 
         input {
             width: 692px;
-            height: 28px;
+            height: 35px;
             border: solid 1px #dddddd;
             border-radius: 0;
             text-indent: 7px;
@@ -595,7 +596,7 @@ main {
         // 修改element 日期范围选框样式
         .el-range-editor.el-input__inner {
             width: 692px;
-            height: 28px;
+            height: 35px;
             border: solid 1px #dddddd;
             border-radius: 0;
             vertical-align: middle;
@@ -619,10 +620,10 @@ main {
             box-sizing: border-box;
 
             ul > li {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: center;
+                // display: flex;
+                // flex-direction: row;
+                // justify-content: flex-start;
+                // align-items: center;
 
                 span {
                     display: inline-block;
@@ -632,7 +633,9 @@ main {
 
             .el-textarea__inner {
                 border-radius: 0px;
-                width: 490px;
+
+                // width: 490px;
+           
             }
         }
     }
@@ -679,6 +682,22 @@ main {
                 background-color: #f9f9f9;
                 border: solid 1px #dddddd;
             }
+        }
+    }
+}
+
+.exper_request {
+    ul > li > span {
+        width: 100%;
+        font-size: 18px;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 5px;
+    }
+
+    ul > li > div {
+        // border: 1px solid #00b1fb;
+        input {
+            width: 650px;
         }
     }
 }
@@ -779,7 +798,7 @@ main {
 
 .exp_list_box {
     width: 770px;
-    margin-top: 40px;
+    height: 550px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -1147,4 +1166,37 @@ main {
 
 .el-input-group__append, .el-input-group__prepend {
     padding: 0;
+}
+
+.el-pagination {
+    margin-top: 20px;
+}
+
+.el-date-editor.el-input.el-input--prefix.el-input--suffix.el-date-editor--datetime {
+    width: 300px !important;
+
+    input {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+}
+
+.el-select {
+    width: 75px;
+    height: 30px;
+
+    input {
+        width: 75px !important;
+        height: 30px !important;
+        background: #00b1fb;
+        color: #FFF !important;
+    }
+
+    .el-input__inner {
+        padding: 0;
+    }
+
+    .el-input__suffix {
+        display: none !important;
+    }
 }
