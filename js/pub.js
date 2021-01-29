@@ -61,7 +61,6 @@ var pub = {
     editPassword: "teacher/editPassword",//修改密码
     editPhone: "teacher/editTeacherIphone",//修改手机号
 
-
     ExperListPage: "experiment/experimentListPage",//实验分页列表
 
     // 题库管理
@@ -73,6 +72,9 @@ var pub = {
     editQ: "questionBank/editQuestionBank",//修改题库
     delQ: "questionBank/delQuestionBank",//删除题库
     previewQ: 'questionBank/findQuestionBankInfo',//预览试卷
+
+    findByTestType: "questionBank/findQuestionInfoByBankAndTypeId",//查某类型的题
+
 
     saveE: "group/saveExperimentGroup",//新增实验小组
     editE: "group/editExperimentGroup",//修改实验小组
@@ -110,9 +112,12 @@ var pub = {
         op.cbk(res);
       },
 
-      fail: function (r) { },
+      fail: function (r) {
+
+      },
     });
   },
+  // 带token接口
   _InitAxios(op) {
     var _op = op;
     axios({
@@ -124,7 +129,12 @@ var pub = {
       },
     })
       .then(function (res) {
-        _op.cbk(res.data);
+        if (res.data.code == 401) {
+          // alert("登录已过期")
+        } else {
+          _op.cbk(res.data);
+        }
+
       })
       .catch(function (cat) {
         _op.cat(cat)

@@ -281,6 +281,10 @@ main {
   border-bottom: 3px solid #00b1fb;
 }
 
+.item_act {
+  background: #00b1fb;
+}
+
 .user_info {
   height: 570px;
   border-top: 2px solid #ddd;
@@ -1099,7 +1103,7 @@ main {
 }
 
 .el-input-group__append, .el-input-group__prepend {
-  padding: 0;
+  padding: 0 10px;
 }
 
 .el-pagination {

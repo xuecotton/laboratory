@@ -8,29 +8,23 @@ var app = new Vue({
         userInfo: {
             user_id: "UI3C1Jdst3vcc",
         },
-        // 修改密码表单
-        pswForm: {
+        pswForm: {// 修改密码表单
             old_password: "",
             new_password: "",
             confirm_password: ""
         },
-        // 修改手机号表单
-        phoneForm: {
+        phoneForm: {// 修改手机号表单
             password: '',
             iphone: ''
         },
         canIUseEditPass: true,
-
-
-
-
-
 
         // 题库列表数据
         Q_list: [],//题库分页列表
         QpageSize: 5,
         QpageNum: 1,
         Qtotal: 0,
+        QStatus: '',//题库状态
         onlyMyselfQ: '',//只查看自己题库
         showEditQ: false,//修改题库名称弹出框
         EditQtitle: '', //弹出框标题
@@ -65,7 +59,7 @@ var app = new Vue({
         ],
         // 新增要求类型
         requestType: '',
-        ExperContent: {
+        ExperContent: { //用来存实验小组具体内容的:编辑页面要用
             experiment_group_id: "",
             experiment_group_name: "",
             experiment_id: "",
@@ -74,14 +68,20 @@ var app = new Vue({
             experiment_pic: "",
             start_time: "",
             end_time: ""
-        }, //用来存实验小组具体内容和要求的:编辑页面要用
-        ExpRequire: "",
+        },
+        ExpRequire: [],//用来存实验小组要求的:编辑页面要用
         groupId: "",//用来存实验小组id 来查看学生列表，跳转时用
         groupName: "",//实验小组名称，展示用
         start_time: '',
         end_time: '',
         isFromNewAdd: true,//是否从新增按钮跳到创建实验小组页面的
-
+        requestItem: {
+            require_id: "",
+            require_title: "",
+            require_type: "",
+            require_content: "",
+            require_weight: ""
+        },//用来存单个要求的中间量
         // 小组学生相关
         StudentList: "",//小组成员列表
         StupageSize: 10,
@@ -101,7 +101,8 @@ var app = new Vue({
         actExpIndex: "",//选中的实验索引
 
 
-        tabPosition: 'right',
+
+
         options: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
         imageUrl: '',
         formUploadUrl: baseURL + pub._DetailApi.uploadPic,
@@ -112,11 +113,17 @@ var app = new Vue({
         },
         showExperListDialog: false, //选择实验列表
         showTestListDialog: false,//选择题库列表
-        TestTypeIndex: 1,
+
         radio: "",
 
         // 创建测试题
         val: '',
+        TestTypeIndex: 1,//当前页面展示的题目类型
+        TestItemIndex: 1,//当前页面选中的某道题。
+        testBox: [],//用来盛所有的题。
+        testBoxItem: '',//用来盛一道题的内容。
+        textItemOption: "",//用来盛题目中的某个选项
+        jiashujv: [],//假数据
         testItem: {
             title: "至游子曰：吾尝闻三火之说。民火者，外肾也。日落之际，收民火二十七，次聚水三十六，作一口咽至丹田中，微着力擂外肾一，次玆乃水自上而下，外肾民火自外而入，水火相溉也。臣火者，内肾也。当行煮海于戌亥之交，先以左手兜外肾，右手搓脐下，引起臣火煮丹田，使阴消而阳长，左右两手各行八十一，为一通。君火者，心也。亥后静坐，以心意绕丹田，先左后右，各旋转八十一匝，或三百六十匝，乃心之君火下降，与内肾臣火，民火相合，三火聚而结丹，谓之周天火候。",
             options: [
@@ -139,15 +146,7 @@ var app = new Vue({
                 rightOption: '1'
             },
         ],
-        value1: '',
-        value2: '',
-        demo1: "",
-        demo2: "",
-        // index: '',
-        request: [
-            { title: 1, content: "" },
-            { title: 2, content: "" }
-        ],
+
         textarea: "",
         fileList: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }, { name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
         showTestList: true,//控制题库一二级页面
@@ -165,6 +164,7 @@ var app = new Vue({
         },
         ],
         multipleSelection: [],
+        tabPosition: 'right',
     },
     created() {
         this.init();
@@ -172,10 +172,18 @@ var app = new Vue({
         console.log(this.actExpItem, this.actExpIndex);
     },
     methods: {
-
+        // tab切换时触发
+        clickQPane(val) {
+            if (val.label === '题库') {
+                this.getQlistPage();
+            } else if (val.label === '我的实验') {
+                this.showExperList = 1;
+            }
+        },
         /**
          * @用户信息模块
          */
+        // 获取信息回调
         init: function () {
             var _this = this;
             sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo))
@@ -183,23 +191,24 @@ var app = new Vue({
             var ssinfo = JSON.parse(sessionStorage.getItem('userInfo'));
             if (null !== ssinfo || "" !== ssinfo) {
                 _this.userInfo = ssinfo
-                var teaInfo = {
-                    _url: pub._url,
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
                     ur: pub._DetailApi.TeaInfo,
                     data: _this.userInfo,
-                    cbk: _this.getTeaInfo,
-                }
-                pub._InitAjax(teaInfo);
+                    cbk: function (res) {
+                        res.data.head_portrait = res.data.head_portrait.replace(/^/, baseURL)
+                        this.user_msg = res.data;
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '修改失败',
+                            type: 'info'
+                        })
+                    }
+                });
             } else {
                 window.location.href = "../index.html"
             }
-        },
-        // 获取信息回调
-        getTeaInfo(res) {
-            console.log(res);
-            res.data.head_portrait = res.data.head_portrait.replace(/^/, baseURL)
-            this.user_msg = res.data;
-            console.log(this.user_msg, "++msg");
         },
         // 头像上传
         beforeAvatarUpload(file) {
@@ -351,8 +360,9 @@ var app = new Vue({
                 ur: pub._DetailApi.QListPage,
                 data: {
                     "pageSize": _this.QpageSize,
-                    "pageNum": this.QpageNum,
-                    "user_id": _this.onlyMyselfQ
+                    "pageNum": _this.QpageNum,
+                    "user_id": _this.onlyMyselfQ,
+                    "question_bank_status": _this.QStatus
                 },
                 cbk: function (res) {
                     _this.Q_list = res.page.list;
@@ -469,11 +479,39 @@ var app = new Vue({
         },
         // 题库标题修改
         editQ(row) {
+            var _this = this;
             // this.showEditQ = true;
             // this.EditQtitle = '修改名称'
-            // this.EditQid = row.question_bank_id;
+            this.EditQid = row.question_bank_id;
             this.showTestList = false;//切换到创建题目页面
+            this.getTestTypeCon();
+            setTimeout(() => {
+                _this.testBoxItem = _this.testBox[0]
+                console.log(this.testBoxItem);
+            }, 1000)
+            // console.log(this.testBoxItem);
 
+        },
+        DelTest(index) {
+            console.log(index);
+        },
+        getTestTypeCon() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.findByTestType,
+                data: { "question_bank_id": _this.EditQid, "question_type_id": _this.TestTypeIndex },
+                cbk: function (res) {
+                    console.log(res);
+                    _this.testBox = res.data;
+                },
+                cat: function (cat) {
+                    _this.$message({
+                        message: '操作失败',
+                        type: 'info'
+                    })
+                }
+            });
         },
         // confirmEditQ() {
         //     var _this = this;
@@ -579,6 +617,8 @@ var app = new Vue({
         },
 
 
+
+
         /**
          * @实验小组模块
          */
@@ -662,7 +702,9 @@ var app = new Vue({
         // 确认选择
         confirmSelExpItem() {
             this.showExperListDialog = false;//关闭对话框
-            this.actExpItem = this.actExpMiddle; //拿到过渡量
+            // this.actExpItem = this.actExpMiddle; //拿到过渡量
+            this.ExperContent.experiment_pic = this.actExpMiddle.experiment_pic;
+            this.ExperContent.experiment_id = this.actExpMiddle.experiment_id;
         },
         // 去新增、编辑实验小组内容页面
         toAddE(row) {
@@ -723,38 +765,121 @@ var app = new Vue({
                     start_time: "",
                     end_time: ""
                 },
-                    console.log(this.ExperContent);
+                    this.ExpRequire = [];
+                console.log(this.ExperContent);
             }
+        },
+        // 增加新要求
+
+        addNewRequest(value) {
+            switch (value) {
+                case 1:
+                    this.requestItem = {
+                        require_id: "",
+                        require_title: "实验报告",
+                        require_type: "1",
+                        require_content: "",
+                        require_weight: ""
+                    }
+
+                    break;
+                case 2:
+                    this.requestItem = {
+                        require_id: "",
+                        require_title: "试卷",
+                        require_type: "2",
+                        require_content: "",
+                        require_weight: ""
+                    }
+                    break;
+                case 3:
+                    this.requestItem = {
+                        require_id: "",
+                        require_title: "实验操作",
+                        require_type: "3",
+                        require_content: "",
+                        require_weight: ""
+                    }
+                    break;
+                case 4:
+                    this.requestItem = {
+                        require_id: "",
+                        require_title: "",
+                        require_type: "4",
+                        require_content: "",
+                        require_weight: ""
+                    }
+                    break;
+            }
+            this.ExpRequire.push(this.requestItem)
+            this.requestType = '';
+            console.log(this.ExpRequire);
+        },
+        // 要求中选择题库
+        show_test_list_dioag() {
+            this.showTestListDialog = true;
+            this.QStatus = '0';
+            this.getQlistPage();
+        },
+        //选中列表中的题库
+        confirmQListDia() {
+            this.showTestListDialog = false;//关闭弹窗
+            this.QStatus = "" //查询列表时，把状态码筛选关闭
+            console.log(this.radio);
+            // this.requestItem.require_content = this.radio;
+            for (var i = 0; i < this.ExpRequire.length; i++) {
+                if (this.ExpRequire[i].require_type == '2') {
+                    this.ExpRequire[i].require_content = this.radio
+                }
+            }
+        },
+        cancalQTilstDia() {
+            this.showTestListDialog = false;
+            this.QStatus = ""
+        },
+        // 删除要求
+        delRequestItem(index) {
+            this.$confirm('确定删除此项要求吗？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'success',
+                center: true
+            }).then(() => {
+                this.ExpRequire.splice(index, 1);
+            }).catch(() => {
+                this.$message("已取消")
+            })
+
         },
         // 保存 或 修改 实验小组
         saveOrEditGroup() {
             var _this = this;
+            console.log(this.isFromNewAdd);
             console.log({ ..._this.ExperContent, "user_id": _this.userInfo.user_id, "experiment_require": _this.ExpRequire });
-            if (!_this.isFromNewAdd) {
-                pub._InitAxios({
-                    _url: pub._url, //公共接口
-                    ur: pub._DetailApi.editE,
-                    data: {
-                        ..._this.ExperContent,
-                        "user_id": _this.userInfo.user_id,
-                        "experiment_require": _this.ExpRequire
-                    },
-                    cbk: function (res) {
-                        _this.showExperList = 1;
-                        _this.$message({
-                            message: '保存成功,去发布！',
-                            type: 'success'
-                        })
-                    },
-                    cat: function (cat) {
-                        _this.$message({
-                            message: '操作失败',
-                            type: 'info'
-                        })
-                    }
-                });
-            }
-
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: _this.isFromNewAdd ? pub._DetailApi.saveE : pub._DetailApi.editE,
+                // ur: pub._DetailApi.editE,
+                data: {
+                    ..._this.ExperContent,
+                    "user_id": _this.userInfo.user_id,
+                    "experiment_require": _this.ExpRequire
+                },
+                cbk: function (res) {
+                    _this.showExperList = 1;
+                    _this.getExperList();
+                    _this.$message({
+                        message: '保存成功,去发布！',
+                        type: 'success'
+                    })
+                },
+                cat: function (cat) {
+                    _this.$message({
+                        message: '操作失败',
+                        type: 'info'
+                    })
+                }
+            });
         },
 
         // 发布小组
@@ -941,6 +1066,17 @@ var app = new Vue({
         handleRemove(file, fileList) {
             console.log(file, fileList);
         },
+        beforeAvatarUpload1() { },
+        // 上传实验报告模板
+        handleAvatarSuccess1(res) {
+            for (var i = 0; i < this.ExpRequire.length; i++) {
+                if (this.ExpRequire[i].require_type == '1') {
+                    this.ExpRequire[i].require_content = res.data.src
+                }
+            }
+
+            // this.requestItem.require_content = res.data.src
+        },
         handlePreview1(file) {
             console.log(file.url);
         },
@@ -957,13 +1093,27 @@ var app = new Vue({
         },
 
 
-        show_test_list_dioag() {
-            this.showTestListDialog = true;
-        },
+        // 选中题型
         showTestType(index) {
-            this.TestTypeIndex = index
+            this.TestTypeIndex = index;//切换题型
+            this.TestItemIndex = 1;//切换题型时让所有类型的题默认展示第一个
+            this.getTestTypeCon();
+            this.testBoxItem = this.testBox[0];
+        },
+        showTestItem(it) {
+            console.log(it);
+            this.TestItemIndex = it.question_id;
+            this.jiashujv = this.testBox[it.question_id - 1]
         },
 
+        // 新增选项
+        addnewOption() {
+            this.jiashujv.push("1")
+        },
+        // 删除选项
+        delOption(k) {
+            this.jiashujv.splice(k, 1)
+        }
 
     },
     watch: {

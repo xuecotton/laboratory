@@ -41,7 +41,7 @@
         </div>
         <main>
             <div class="main">
-                <el-tabs :tab-position="tabPosition">
+                <el-tabs :tab-position="tabPosition" @tab-click="clickQPane">
                     <el-tab-pane label="个人信息">
                         <div class="barbox">
                             <div class="title">
@@ -65,10 +65,9 @@
                                         </li>
                                     </ul>
                                     <div class="avatar">
-
                                         <img :src="user_msg.head_portrait">
-                                        <el-upload ref="upload" :before-upload="beforeAvatarUpload" class="no_btn"
-                                            :action="formUploadUrl" :on-success="handleAvatarSuccess"
+                                        <el-upload ref="upload" class="no_btn" :action="formUploadUrl"
+                                            :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess"
                                             :show-file-list="false">上传头像
                                         </el-upload>
                                     </div>
@@ -152,9 +151,13 @@
                                                     class="item" effect="dark" content="发布" placement="top">
                                                     <i class="el-icon-s-promotion icon" @click="submitQ(scope.row)"></i>
                                                 </el-tooltip>
-                                                <el-tooltip
+                                                <!-- <el-tooltip
                                                     v-if="scope.row.user_id==userInfo.user_id && scope.row.question_bank_status==0"
                                                     class="item" effect="dark" content="编辑" placement="top">
+                                                    <i class='el-icon-edit-outline icon' @click="editQ(scope.row)"></i>
+                                                </el-tooltip> -->
+                                                <el-tooltip v-if="scope.row.question_bank_status==0" class="item"
+                                                    effect="dark" content="编辑" placement="top">
                                                     <i class='el-icon-edit-outline icon' @click="editQ(scope.row)"></i>
                                                 </el-tooltip>
                                                 <el-tooltip v-if="scope.row.user_id==userInfo.user_id " class="item"
@@ -192,7 +195,6 @@
                                 </div>
                                 <el-dialog :title="EditQtitle" :close-on-click-modal='false' :visible.sync="showEditQ"
                                     width="500px" center>
-
                                     <el-input v-model="editQvalue" placeholder="请输入内容">
                                         <template slot="prepend">题库名称：</template>
                                     </el-input>
@@ -219,16 +221,10 @@
                                 </div>
                             </div>
                             <div class="content_chenge">
-                                <a :class="this.TestTypeIndex == 1?'tab1_act':''" @click="showTestType(1)">单选
-                                    <span>（60分）</span></a>
-                                <a :class="this.TestTypeIndex == 2?'tab1_act':''" @click="showTestType(2)">多选
-                                    <span>（60分）</span></a>
-                                <a :class="this.TestTypeIndex == 3?'tab1_act':''"
-                                    @click="showTestType(3)">填空<span>（60分）</span></a>
-                                <a :class="this.TestTypeIndex == 4?'tab1_act':''"
-                                    @click="showTestType(4)">判断<span>（60分）</span></a>
-                                <a :class="this.TestTypeIndex == 5?'tab1_act':''"
-                                    @click="showTestType(5)">简答<span>（60分）</span></a>
+                                <a :class="TestTypeIndex == 1?'tab1_act':''" @click="showTestType(1)">单选题</a>
+                                <a :class="TestTypeIndex == 2?'tab1_act':''" @click="showTestType(2)">多选题</a>
+                                <a :class="TestTypeIndex == 3?'tab1_act':''" @click="showTestType(3)">判断题</a>
+                                <a :class="TestTypeIndex == 4?'tab1_act':''" @click="showTestType(4)">简答题</a>
                             </div>
                             <div class="test_create">
                                 <div class="radio_test">
@@ -236,8 +232,10 @@
                                         <li>
                                             <span>题号：</span>
                                             <div class="num_list">
-                                                <div class="num_item" v-for="(i,k) in 15" :key="k">
-                                                    1
+                                                <div class="num_item" v-for="(i,k) in testBox" :key="k"
+                                                    :class="TestItemIndex == i.question_id?'item_act':''"
+                                                    @click="showTestItem(i)">
+                                                    {{i.question_id}}
                                                     <i class="el-icon-close icon"></i>
                                                 </div>
                                             </div>
@@ -245,33 +243,29 @@
                                         <li>
                                             <span>分数：</span>
                                             <div class="item_score">
-                                                <input type="text">
+                                                <input type="text" v-model="testBoxItem.question_score">
                                                 分
                                             </div>
                                         </li>
                                         <li>
                                             <span>题目：</span>
                                             <div class="item_tit">
-
+                                                {{testBoxItem.question_title}}
                                             </div>
                                         </li>
                                         <li>
                                             <span>选项：</span>
                                             <div class="item_options">
                                                 <ul>
-                                                    <li v-for="(i,k) in testItem.options">
+                                                    <!-- <li v-for="(i,k) in testBoxItem.question_option"> -->
+                                                    <li v-for="(i,k) in jiashujv" v-if="jiashujv.length>0" :key="k">
                                                         <span>{{k+1}}：</span>
-                                                        <div class="options_con">{{i}}</div>
-                                                        <div>删除</div>
-                                                    </li>
-                                                    <li>
-                                                        <span>{{testItem.options.length+1}}：</span>
-                                                        <div class="options_con"><input type="text" v-model="val"></div>
-                                                        <div>删除</div>
+                                                        <div class="options_con"><input type="text"></div>
+                                                        <div @click="delOption(k)">删除</div>
                                                     </li>
                                                     <li>
                                                         <span>&nbsp;</span>
-                                                        <div @click="">新增选项</div>
+                                                        <div @click="addnewOption">新增选项</div>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -279,8 +273,9 @@
                                         <li>
                                             <span>正确答案：</span>
                                             <div class="right_option">
-                                                <el-radio v-for="(i,k) in testItem.options" v-model="radio"
-                                                    :label="k+1">{{k+1}}</el-radio>
+                                                <el-radio v-for="(i,k) in jiashujv" v-model="i.question_answer" :key="k"
+                                                    :label="k+1">{{k+1}}
+                                                </el-radio>
                                             </div>
                                         </li>
                                         <li>
@@ -394,8 +389,6 @@
                                     <ul>
                                         <li><span>选择实验：</span>
                                             <a class="show_exper_thump" @click="showExpListDiaFun">
-                                                <img v-if="actExpItem.experiment_pic"
-                                                    :src="actExpItem.experiment_pic | addBaseurl" class="avatar">
                                                 <img v-if="ExperContent.experiment_pic"
                                                     :src="ExperContent.experiment_pic | addBaseurl" class="avatar">
                                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -424,17 +417,18 @@
                                                         <!-- 实验报告 -->
                                                         <span>{{index+1}}.{{item.require_title}}</span>
                                                         <div v-if="item.require_type=='1'">
-                                                            <el-upload class="upload-demo"
-                                                                action="https://jsonplaceholder.typicode.com/posts/"
-                                                                :on-preview="handlePreview" :on-remove="handleRemove"
-                                                                :before-remove="beforeRemove" multiple :limit="3"
-                                                                :on-exceed="handleExceed" :file-list="fileList">
-                                                                <div class="light_btn">点击上传</div>
+                                                            <el-upload class="upload-demo" :action="formUploadUrl"
+                                                                :before-upload="beforeAvatarUpload1"
+                                                                :on-success="handleAvatarSuccess1">
+                                                                <div class="light_btn">上传模板</div>
                                                                 <!-- <el-button size="small" type="primary"></el-button> -->
-                                                                <div slot="tip" class="el-upload__tip">
-                                                                    只能上传docx文件，且大小不能超过3M
-                                                                </div>
+                                                                <!-- <div slot="tip" class="el-upload__tip">
+                                                                    
+                                                                </div> -->
+
                                                             </el-upload>
+                                                            <a :href="item.require_content | addBaseurl"
+                                                                target='_blank'>{{item.require_content}}</a>
                                                         </div>
                                                         <!-- 考试 -->
                                                         <div v-if="item.require_type=='2'">
@@ -448,7 +442,6 @@
                                                                 :rows="2" placeholder="请输入考核要点（可以为空）">
                                                             </el-input>
                                                         </div>
-
                                                         <!-- 其他要求 -->
                                                         <div v-if="item.require_type=='4'">
                                                             <el-input type="text" v-model="item.require_title"
@@ -457,13 +450,13 @@
                                                             <el-input type="textarea" v-model="item.require_content"
                                                                 :rows="2" placeholder="请输入要求详情">
                                                             </el-input>
-                                                            <div class="dark_btn">删除</div>
                                                         </div>
+                                                        <div class="dark_btn" @click="delRequestItem(index)">删除</div>
                                                     </li>
                                                     <li>
                                                         <div class="">
-                                                            <el-select v-model="requestType" clearable
-                                                                placeholder="新增要求">
+                                                            <el-select v-model="requestType" @change="addNewRequest"
+                                                                clearable placeholder="新增要求">
                                                                 <el-option v-for="item in requestTypeList"
                                                                     :key="item.value" :label="item.label"
                                                                     :value="item.value">
@@ -495,7 +488,7 @@
                                                     </div>
                                                     <div v-for="(item,index) in ExpRequire" :key="index"
                                                         class="weight_item">
-                                                        +<input type="text" v-model="item.require_weight*100">%
+                                                        +<input type="text" v-model="item.require_weight">%
                                                     </div>
                                                     <div class="weight_item">
                                                         =<span>100%</span>
@@ -655,10 +648,42 @@
                     </span>
                 </el-dialog>
                 <!-- 选择题库弹出框 -->
-                <el-dialog title="题库" :close-on-click-modal='false' max-height="400" width="460px"
-                    :visible.sync="showTestListDialog" center>
+                <el-dialog title="题库" :close-on-click-modal='false' :close-on-press-escape="false" :show-close="false"
+                    max-height="400" width="600px" :visible.sync="showTestListDialog" center>
                     <div class="test_list_box">
-                        <el-table ref="multipleTable" :data="Q_list" tooltip-effect="dark" style="width: 100%"
+                        <div class="istable" v-if="Q_list.length>0">
+                            <el-table stripe ref="multipleTable" :data="Q_list" tooltip-effect="dark"
+                                style="width: 100%" @selection-change="handleSelectionChange">
+                                <el-table-column label="题目" show-overflow-tooltip width="200" prop="title">
+                                    <template slot-scope="props">
+                                        <div class="test_list_title">
+                                            <el-radio v-model="radio" :label=props.row.question_bank_id>&nbsp;
+                                            </el-radio>
+                                            <span>{{props.row.question_bank_name}}</span>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="teacher_name" align="center" label="出题人" show-overflow-tooltip
+                                    :render-header="renderProductId">
+                                </el-table-column>
+                                <el-table-column prop="create_time" align="center" label="创建日期" show-overflow-tooltip>
+                                </el-table-column>
+                            </el-table>
+                            <div class="page">
+                                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                    :page-size="QpageSize" layout="total,prev, pager, next" :total="Qtotal">
+                                </el-pagination>
+                            </div>
+                        </div>
+
+
+                        <div v-if="Q_list.length==0">
+                            <div class="notable">
+                                <img src="../img/bank.png" alt="">
+                                <div style="text-align: center;">无题库列表</div>
+                            </div>
+                        </div>
+                        <!-- <el-table ref="multipleTable" :data="Q_list" tooltip-effect="dark" style="width: 100%"
                             @selection-change="handleSelectionChange">
                             <el-table-column label="题目" show-overflow-tooltip width="200" prop="title">
                                 <template slot-scope="props">
@@ -672,11 +697,11 @@
                             </el-table-column>
                             <el-table-column prop="author" label="出题人">
                             </el-table-column>
-                        </el-table>
+                        </el-table> -->
                     </div>
                     <span slot="footer" class="dialog-footer">
-                        <el-button @click="showTestListDialog = false">取 消</el-button>
-                        <el-button type="primary" @click="showTestListDialog = false">确 定</el-button>
+                        <el-button @click="cancalQTilstDia">取 消</el-button>
+                        <el-button type="primary" @click="confirmQListDia">确 定</el-button>
                     </span>
                 </el-dialog>
             </div>
