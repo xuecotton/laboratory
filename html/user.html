@@ -213,11 +213,14 @@
                                 <div class="back" @click="showTestList=true"><img src="../img/back.png" alt=""></div>
 
                                 <div class="test_btn">
-                                    <div class="total_score">
-                                        已创建题目<span>12</span> 道，总分 <span>60</span> 分
+                                    <div class="total_score" v-if="totalScoreAndNum">
+                                        已创建题目<span>{{totalScoreAndNum.count}}</span> 道，总分
+                                        <span
+                                            v-text="totalScoreAndNum.totle_Score==null?'0':totalScoreAndNum.totle_Score"></span>
+                                        分
                                     </div>
-                                    <div class="handleBtn">提交<img src="../img/submit.png" alt=""><img
-                                            src="../img/submit.png" alt=""></div>
+                                    <div class="handleBtn" @click="submitAllTest">提交<img src="../img/submit.png"
+                                            alt=""><img src="../img/submit.png" alt=""></div>
                                 </div>
                             </div>
                             <div class="content_chenge">
@@ -236,8 +239,14 @@
                                                     :class="TestItemIndex == i.question_id?'item_act':''"
                                                     @click="showTestItem(i)">
                                                     {{i.question_id}}
-                                                    <i class="el-icon-close icon"></i>
+                                                    <i class="el-icon-close icon" @click="delOneTest(i)"></i>
+
                                                 </div>
+                                                <el-tooltip class="item" effect="dark" content="新增题目" placement="top">
+                                                    <i class="el-icon-plus  icon" style="width: 20px;
+                                                height: 20px;margin:10px;border: 1px solid #ddd;"
+                                                        @click="addNewOneTest"></i>
+                                                </el-tooltip>
                                             </div>
                                         </li>
                                         <li>
@@ -250,17 +259,22 @@
                                         <li>
                                             <span>题目：</span>
                                             <div class="item_tit">
-                                                {{testBoxItem.question_title}}
+                                                <el-input type="textarea" v-model="testBoxItem.question_title" :rows="2"
+                                                    placeholder="请输入题目">
+                                                </el-input>
                                             </div>
                                         </li>
-                                        <li>
+                                        <li v-if="TestTypeIndex != 4">
                                             <span>选项：</span>
                                             <div class="item_options">
                                                 <ul>
-                                                    <!-- <li v-for="(i,k) in testBoxItem.question_option"> -->
-                                                    <li v-for="(i,k) in jiashujv" v-if="jiashujv.length>0" :key="k">
-                                                        <span>{{k+1}}：</span>
-                                                        <div class="options_con"><input type="text"></div>
+                                                    <li v-for="(i,k) in testBoxItem.question_option" :key="k">
+                                                        <!-- <li v-for="(i,k) in jiashujv" v-if="jiashujv.length>0" :key="k"> -->
+                                                        <span>{{options[k]}}：</span>
+                                                        <div class="options_con">
+                                                            <el-input type="text"
+                                                                v-model="testBoxItem.question_option[k]"></el-input>>
+                                                        </div>
                                                         <div @click="delOption(k)">删除</div>
                                                     </li>
                                                     <li>
@@ -272,16 +286,25 @@
                                         </li>
                                         <li>
                                             <span>正确答案：</span>
-                                            <div class="right_option">
-                                                <el-radio v-for="(i,k) in jiashujv" v-model="i.question_answer" :key="k"
-                                                    :label="k+1">{{k+1}}
+                                            <!-- 单选 || 判断 -->
+                                            <div class="right_option" v-if="TestTypeIndex==1 || TestTypeIndex==3">
+                                                <el-radio v-for="(i,k) in testBoxItem.question_option"
+                                                    v-model="testBoxItem.question_answer" :key="k" :label="options[k]">
                                                 </el-radio>
+
+                                            </div>
+                                            <!-- 多选 -->
+                                            <div class="right_option" v-if="TestTypeIndex==2">
+                                                <el-checkbox-group v-model="testBoxItem.question_answer">
+                                                    <el-checkbox v-for="(i,k) in testBoxItem.question_option"
+                                                        :label="options[k]"></el-checkbox>
+                                                </el-checkbox-group>
                                             </div>
                                         </li>
                                         <li>
                                             <span>&nbsp;</span>
                                             <div class="save_radio_test">
-                                                <div>保存</div>
+                                                <div @click="saveOneTest">保存</div>
                                             </div>
                                         </li>
                                     </ul>

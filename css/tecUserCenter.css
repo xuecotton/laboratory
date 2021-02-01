@@ -1138,3 +1138,15 @@ main {
 .el-select .el-input__suffix {
   display: none !important;
 }
+
+.el-checkbox__input {
+  width: 15px !important;
+}
+
+.el-checkbox__input .el-checkbox__inner {
+  width: 15px !important;
+}
+
+.el-checkbox__label {
+  width: 15px !important;
+}

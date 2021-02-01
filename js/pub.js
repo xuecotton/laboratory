@@ -72,9 +72,13 @@ var pub = {
     editQ: "questionBank/editQuestionBank",//修改题库
     delQ: "questionBank/delQuestionBank",//删除题库
     previewQ: 'questionBank/findQuestionBankInfo',//预览试卷
+    viewTestTotalScore: "questionBank/findQuestionCountAndTotleScore",//查看试卷总分和题量
+
 
     findByTestType: "questionBank/findQuestionInfoByBankAndTypeId",//查某类型的题
-
+    addOneTest: "questionBank/saveQuestionInfo",//新增一道题
+    editOneTest: "questionBank/editQuestionInfo",//修改某道题
+    delOneTest: "questionBank/delQuestionInfo",//删除某题
 
     saveE: "group/saveExperimentGroup",//新增实验小组
     editE: "group/editExperimentGroup",//修改实验小组
@@ -85,7 +89,7 @@ var pub = {
     recallE: "group/recallExperimentGroup",//撤回实验小组
     listGroupStu: 'group/experimentGroupMemberScore',//列表小组内的学生
     delStudent: "group/delExperimentGroupMember",//老师踢学生
-
+    selectStu: 'group/singleStudentScoring',//查询学生卷面
 
     addgroup: "group/saveExperimentGroupMember",//学生加进小组
 

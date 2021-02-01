@@ -121,9 +121,18 @@ var app = new Vue({
         TestTypeIndex: 1,//当前页面展示的题目类型
         TestItemIndex: 1,//当前页面选中的某道题。
         testBox: [],//用来盛所有的题。
-        testBoxItem: '',//用来盛一道题的内容。
+        testBoxItem: {
+            question_answer: null,
+            question_id: "1",
+            question_option: [],
+            question_score: "",
+            question_title: "",
+            question_type_name: "",
+            uuid: "",
+        },//用来盛一道题的内容。
         textItemOption: "",//用来盛题目中的某个选项
         jiashujv: [],//假数据
+        totalScoreAndNum: '',//存总分和题量的
         testItem: {
             title: "至游子曰：吾尝闻三火之说。民火者，外肾也。日落之际，收民火二十七，次聚水三十六，作一口咽至丹田中，微着力擂外肾一，次玆乃水自上而下，外肾民火自外而入，水火相溉也。臣火者，内肾也。当行煮海于戌亥之交，先以左手兜外肾，右手搓脐下，引起臣火煮丹田，使阴消而阳长，左右两手各行八十一，为一通。君火者，心也。亥后静坐，以心意绕丹田，先左后右，各旋转八十一匝，或三百六十匝，乃心之君火下降，与内肾臣火，民火相合，三火聚而结丹，谓之周天火候。",
             options: [
@@ -201,7 +210,7 @@ var app = new Vue({
                     },
                     cat: function (cat) {
                         _this.$message({
-                            message: '修改失败',
+                            message: '查询失败',
                             type: 'info'
                         })
                     }
@@ -485,11 +494,28 @@ var app = new Vue({
             this.EditQid = row.question_bank_id;
             this.showTestList = false;//切换到创建题目页面
             this.getTestTypeCon();
-            setTimeout(() => {
-                _this.testBoxItem = _this.testBox[0]
-                console.log(this.testBoxItem);
-            }, 1000)
+
+            // setTimeout(() => {
+            //     _this.testBoxItem = _this.testBox[0]
+            //     // console.log(_this.testBox);
+            // }, 1000)
             // console.log(this.testBoxItem);
+
+        },
+        viewScore() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.viewTestTotalScore,
+                data: { "question_bank_id": _this.EditQid },
+                cbk: function (res) {
+                    _this.totalScoreAndNum = res.data;
+                    console.log(res);
+                },
+                cat: function (cat) {
+
+                }
+            });
 
         },
         DelTest(index) {
@@ -502,8 +528,24 @@ var app = new Vue({
                 ur: pub._DetailApi.findByTestType,
                 data: { "question_bank_id": _this.EditQid, "question_type_id": _this.TestTypeIndex },
                 cbk: function (res) {
-                    console.log(res);
                     _this.testBox = res.data;
+                    if (res.data.length > 0) {
+                        _this.testBoxItem = _this.testBox[0];
+                        _this.TestItemIndex = 1;
+                    } else {
+                        _this.testBoxItem = {
+                            question_answer: _this.TestTypeIndex == 2 ? [] : '',
+                            question_id: "1",
+                            question_option: [],
+                            question_score: "",
+                            question_title: "",
+                            question_type_name: "",
+                            uuid: "",
+                        },
+                            _this.testBox.push(_this.testBoxItem)
+                    }
+                    console.log(_this.testBox);
+                    _this.viewScore();//查看总分和题量
                 },
                 cat: function (cat) {
                     _this.$message({
@@ -540,6 +582,121 @@ var app = new Vue({
         //     }
 
         // },
+        // 选中题型
+        showTestType(index) {
+            this.TestTypeIndex = index;//切换题型
+            this.TestItemIndex = 1;//切换题型时让所有类型的题默认展示第一个;
+            this.getTestTypeCon();
+            // this.testBoxItem = this.testBox[0];
+            if (this.TestItemIndex == 3) {
+                this.testBoxItem.question_option = ["正确", "错误"]
+            } else if (this.TestItemIndex == 2) {
+                this.testBoxItem.question_answer = [];
+            }
+        },
+        showTestItem(it) {
+            console.log(it);
+            this.TestItemIndex = it.question_id;
+            this.testBoxItem = this.testBox[it.question_id - 1]
+        },
+        // 新增一道题
+        addNewOneTest() {
+            this.testBoxItem = {
+                question_answer: this.TestTypeIndex == 2 ? [] : '',
+                question_id: this.testBox.length + 1,
+                question_option: [],
+                question_score: "",
+                question_title: "",
+                question_type_name: "",
+                uuid: "",
+            };
+            this.testBox.push(this.testBoxItem)
+            this.TestItemIndex = this.testBoxItem.question_id;
+        },
+        // 新增选项
+        addnewOption() {
+            this.testBoxItem.question_option.push(this.options[this.testBoxItem.question_option.length])
+        },
+        // 删除选项
+        delOption(k) {
+            this.testBoxItem.question_option.splice(k, 1);
+        },
+        // 保存完整的一道题
+        saveOneTest() {
+            var _this = this;
+            console.log(_this.testBoxItem);
+            //  if(_this.testBoxItem.question_answer=='' || _this.testBoxItem.question_answer.length<1){
+            //     _this.$message({
+            //         message: '未选择正确答案',
+            //         type: 'info'
+            //     })
+            //      return false;
+            //  } else if (_this.testBoxItem.question_title=="" || _this.testBoxItem.question_option.length<1) {
+
+            //  } else if (_this.question_score == "") {
+
+            // };
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: _this.testBoxItem.uuid ? pub._DetailApi.editOneTest : pub._DetailApi.addOneTest,
+                data: { "question_bank_id": _this.EditQid, ..._this.testBoxItem, "question_type_id": _this.TestTypeIndex },
+                cbk: function (res) {
+                    _this.getTestTypeCon();
+                    // _this.testBox = res.data;
+                    // _this.testBoxItem = _this.testBox[0]
+                    // _this.testBoxItem = _this.testBox[_this.testBoxItem.question_id - 1]
+                    console.log(_this.testBoxItem);
+                    _this.$message({
+                        message: '保存成功',
+                        type: 'info'
+                    })
+                },
+                cat: function (cat) {
+                    _this.$message({
+                        message: '操作失败',
+                        type: 'info'
+                    })
+                }
+            });
+        },
+        delOneTest(i) {
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.delOneTest,
+                data: { "uuid": i.uuid },
+                cbk: function (res) {
+                    _this.getTestTypeCon();
+                },
+                cat: function (cat) {
+                    _this.$message({
+                        message: '操作失败',
+                        type: 'info'
+                    })
+                }
+            });
+        },
+        // 提交
+        submitAllTest() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.submitQ,
+                data: { "question_bank_id": _this.EditQid },
+                cbk: function (res) {
+                    _this.showTestList = true;
+                    _this.$message({
+                        message: '提交成功',
+                        type: 'success'
+                    })
+                },
+                cat: function (cat) {
+                    _this.$message({
+                        message: '操作失败',
+                        type: 'info'
+                    })
+                }
+            });
+        },
 
         // 题库删除
         delQ(row) {
@@ -1016,8 +1173,21 @@ var app = new Vue({
         },
         // 去给学生打分
         editStu(row) {
-            this.showExperList = 3
-            // 继续写后续逻辑
+            this.showExperList = 3;
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.selectStu,
+                data: {
+                    "user_id": row.user_id,
+                    "experiment_group_id": row.experiment_group_id
+                },
+                cbk: function (res) {
+                    console.log(res);
+                },
+                cat: function (cat) {
+                }
+            });
         },
         // 把学生提出去
         delStu(row) {
@@ -1093,27 +1263,7 @@ var app = new Vue({
         },
 
 
-        // 选中题型
-        showTestType(index) {
-            this.TestTypeIndex = index;//切换题型
-            this.TestItemIndex = 1;//切换题型时让所有类型的题默认展示第一个
-            this.getTestTypeCon();
-            this.testBoxItem = this.testBox[0];
-        },
-        showTestItem(it) {
-            console.log(it);
-            this.TestItemIndex = it.question_id;
-            this.jiashujv = this.testBox[it.question_id - 1]
-        },
 
-        // 新增选项
-        addnewOption() {
-            this.jiashujv.push("1")
-        },
-        // 删除选项
-        delOption(k) {
-            this.jiashujv.splice(k, 1)
-        }
 
     },
     watch: {
