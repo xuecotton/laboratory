@@ -88,6 +88,18 @@ var app = new Vue({
         StupageNum: 1,
         Stutotal: 0,
 
+        // 
+        theStudent: '',
+        StuSubmitCont: '',//学生提交内容
+        StuShortAnswer: '',//简答题答案
+
+
+
+
+
+
+
+
         // 实验列表相关
         expList: "",//列表数据
         expageSize: 9,
@@ -106,6 +118,7 @@ var app = new Vue({
         options: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
         imageUrl: '',
         formUploadUrl: baseURL + pub._DetailApi.uploadPic,
+        preViewReport: baseURL,
         formLabelAlign: {
             name: '',
             region: '',
@@ -117,6 +130,7 @@ var app = new Vue({
         radio: "",
 
         // 创建测试题
+        tBankId: '',
         val: '',
         TestTypeIndex: 1,//当前页面展示的题目类型
         TestItemIndex: 1,//当前页面选中的某道题。
@@ -443,7 +457,9 @@ var app = new Vue({
                     cbk: function (res) {
                         _this.showEditQ = false; //关闭弹框
                         _this.editQvalue = "";
-                        _this.showTestList = false;//切换到创建题目页面
+                        // _this.tBankId = res.data.question_bank_id;
+                        // _this.showTestList = false;//切换到创建题目页面
+                        _this.getQlistPage();
                     },
                     cat: function (cat) {
                         _this.$message({
@@ -555,33 +571,7 @@ var app = new Vue({
                 }
             });
         },
-        // confirmEditQ() {
-        //     var _this = this;
-        //     if (_this.editQvalue == '') {
-        //         _this.$message({
-        //             message: '输入不能为空',
-        //             type: 'info'
-        //         })
-        //     } else {
-        //         pub._InitAxios({
-        //             _url: pub._url, //公共接口
-        //             ur: pub._DetailApi.editQ,
-        //             data: { "question_bank_id": _this.EditQid, "question_bank_name": _this.editQvalue },
-        //             cbk: function (res) {
-        //                 _this.getQlistPage();
-        //                 _this.showEditQ = false;
-        //                 _this.editQvalue = "";
-        //             },
-        //             cat: function (cat) {
-        //                 _this.$message({
-        //                     message: '操作失败',
-        //                     type: 'info'
-        //                 })
-        //             }
-        //         });
-        //     }
 
-        // },
         // 选中题型
         showTestType(index) {
             this.TestTypeIndex = index;//切换题型
@@ -975,7 +965,7 @@ var app = new Vue({
         // 要求中选择题库
         show_test_list_dioag() {
             this.showTestListDialog = true;
-            this.QStatus = '0';
+            this.QStatus = '1';
             this.getQlistPage();
         },
         //选中列表中的题库
@@ -1012,6 +1002,9 @@ var app = new Vue({
         saveOrEditGroup() {
             var _this = this;
             console.log(this.isFromNewAdd);
+            for (var i = 0; i < _this.ExpRequire.length; i++) {
+                _this.ExpRequire[i].require_id = i + 1
+            }
             console.log({ ..._this.ExperContent, "user_id": _this.userInfo.user_id, "experiment_require": _this.ExpRequire });
             pub._InitAxios({
                 _url: pub._url, //公共接口
@@ -1137,6 +1130,10 @@ var app = new Vue({
         },
 
 
+
+        /**
+         *@评分操作 
+         */
         // 获取小组学生
         getStuList() {
             var _this = this;
@@ -1175,15 +1172,24 @@ var app = new Vue({
         editStu(row) {
             this.showExperList = 3;
             var _this = this;
+            if (row) {
+                _this.theStudent = row;
+            }
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.selectStu,
                 data: {
-                    "user_id": row.user_id,
-                    "experiment_group_id": row.experiment_group_id
+                    "user_id": _this.theStudent.user_id,
+                    "experiment_group_id": _this.theStudent.experiment_group_id
                 },
                 cbk: function (res) {
                     console.log(res);
+                    _this.StuSubmitCont = res.data;
+                    _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
+                        return Object.assign(item, { theScore: '' })
+                    })
+                    console.log(_this.StuShortAnswer);
+
                 },
                 cat: function (cat) {
                 }
@@ -1225,6 +1231,58 @@ var app = new Vue({
                     type: 'info'
                 })
             })
+
+        },
+        // 给某项要求评分
+        saveReqScore(type) {
+            var _this = this;
+            var json = {
+                "question_bank_id": _this.StuSubmitCont.question_bank_id,
+                "user_id": _this.StuSubmitCont.user_id,
+                "require_id": type,
+                "require_weight": '',
+                "require_score": "",
+            };
+            for (let i = 0; i < _this.StuSubmitCont.experiment_require.length; i++) {
+                if (_this.StuSubmitCont.experiment_require[i].require_type == type) {
+                    json.require_weight = _this.StuSubmitCont.experiment_require[i].require_weight;
+                    if (type != "2") {
+                        json.require_score = _this.StuSubmitCont.experiment_require[i].require_score;
+                    } else {
+                        json.require_score =
+                            parseInt(_this.StuSubmitCont.judgeScore) +
+                            parseInt(_this.StuSubmitCont.singleChoiceScore) +
+                            parseInt(_this.StuSubmitCont.multipleChoiceScore) +
+                            _this.StuShortAnswer.reduce((prev, curr, idx, arr) => {
+                                return parseInt(prev.theScore) + parseInt(curr.theScore)
+                            })
+                    }
+                }
+            }
+            console.log(json);
+            // 判空
+            if (json.require_score == "") {
+                _this.$message({
+                    message: '当前要求未评分',
+                    type: 'info'
+                })
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.TeaCommit,
+                    data: json,
+                    cbk: function (res) {
+                        _this.editStu();
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '操作失败',
+                            type: 'info'
+                        })
+                    }
+                });
+            }
+
 
         },
 

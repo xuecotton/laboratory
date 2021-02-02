@@ -211,10 +211,9 @@ main {
         }
 
         .el-tabs__header {
-            width: 184px;
+            min-width: 184px;
             background-color: #ffffff;
             border: solid 1px #dddddd;
-            margin-right: 20px;
             font-family: SourceHanSansCN-Regular;
             font-size: 16px;
             font-weight: 500;
@@ -930,8 +929,6 @@ main {
 }
 
 .correct_box {
-    padding: 0 20px;
-
     .list_topic_type {
         height: 60px;
         display: flex;
@@ -1219,4 +1216,24 @@ main {
 
 .el-checkbox__label {
     width: 15px !important;
+}
+
+.main .el-tabs--right .el-tabs__header .is-top {
+    margin-right: 0 !important;
+}
+
+.el-tabs__content {
+    margin-left: 20px;
+}
+
+.el-tabs--border-card > .el-tabs__content {
+    padding: 0;
+}
+
+.smallRedTips {
+    margin: 0 5px 0 0;
+}
+
+.el-badge__content.is-fixed.is-dot {
+    top: 10px;
 }

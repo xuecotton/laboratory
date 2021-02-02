@@ -90,6 +90,7 @@ var pub = {
     listGroupStu: 'group/experimentGroupMemberScore',//列表小组内的学生
     delStudent: "group/delExperimentGroupMember",//老师踢学生
     selectStu: 'group/singleStudentScoring',//查询学生卷面
+    TeaCommit: 'group/editRequireScore',//老师评分
 
     addgroup: "group/saveExperimentGroupMember",//学生加进小组
 

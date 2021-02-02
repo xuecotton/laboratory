@@ -530,8 +530,8 @@
                         <!-- 评分界面 -->
                         <div class="barbox" v-if="showExperList==3">
                             <div class="title">
-                                <div class="back" @click="showExperList=1"><img src="../img/back.png" alt=""></div>
-                                <span style="border: none;">皇甫建刚</span>
+                                <div class="back" @click="showExperList=4"><img src="../img/back.png" alt=""></div>
+                                <span style="border: none;">{{StuSubmitCont.student_name}}</span>
                                 <div class="test_btn">
                                     <div class="handleBtn">提交<img src="../img/submit.png" alt="">
                                         <img src="../img/submit.png" alt="">
@@ -539,40 +539,60 @@
                                 </div>
                             </div>
                             <div class="content_chenge">
-                                <a class="tabbar1 tab1_act">试卷（60分）</a>
+                                <!-- <a class="tabbar1 tab1_act">试卷（60分）</a>
                                 <a class="tabbar1">实验报告（60分）</a>
-                                <a class="tabbar1">实验操作（60分）</a>
-                                <span class="total_score fl_r">总分<span>250</span></span>
+                                <a class="tabbar1">实验操作（60分）</a> -->
+
+                                <span class="total_score fl_r">总分<span>{{StuSubmitCont.totle_score}}</span></span>
                             </div>
-                            <div class="user_info tab_con1">
-                                <div class="correct_box">
-                                    <ul class="list_topic_type">
-                                        <li>单选题<span>60分</span></li>
-                                        <li>多选题<span>75分</span></li>
-                                        <li>判断题<span>80分</span></li>
-                                        <li>填空题<span>90分</span></li>
-                                        <li>简答题<span>10分</span></li>
-                                    </ul>
-                                    <div class="corr_list">
-                                        <div class="corr_item">
-                                            <div class="corr_tle">1.锚杆主要通过将围岩中一定范围岩体的应力状态由单向（或双向）受压转变为三向受压，从而提高其环向抗压强度？
+                            <el-tabs type="border-card" tab-position="top">
+                                <el-tab-pane v-for="(item,index) in StuSubmitCont.experiment_require" :key="index">
+                                    <span slot="label">
+                                        <el-badge :is-dot="item.require_status==0" class="smallRedTips">
+                                            {{item.require_title+'('+item.require_weight+'%)'}}</el-badge>
+                                    </span>
+                                    <div class=" tab_con1" style="min-height: 570px;">
+                                        <div class="correct_box">
+                                            <ul class="list_topic_type" v-if="item.require_type==2">
+                                                <li>单选题<span>（{{StuSubmitCont.singleChoiceScore}}分）</span></li>
+                                                <li>多选题<span>（{{StuSubmitCont.multipleChoiceScore}}分）</span></li>
+                                                <li>判断题<span>（{{StuSubmitCont.judgeScore}}分）</span></li>
+
+                                            </ul>
+                                            <div class="corr_list" v-if="item.require_type==2">
+                                                <div class="corr_item" v-for="(it,inx) in StuShortAnswer" :key="inx">
+                                                    <div class="corr_tle">
+                                                        {{it.question_id}}.{{it.question_title}}
+                                                    </div>
+                                                    <div class="corr_ans">
+                                                        {{it.question_answer}}
+                                                    </div>
+                                                    <div class="corr_score">评分：<input type="text" v-model="it.theScore">
+                                                    </div>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="view_report" v-if="item.require_type==1">报告：<a
+                                                :href="preViewReport+item.require_content" target="_blank">在线预览</a>
+                                        </div>
+                                        <div class="corr_score" v-if="item.require_type==3 || item.require_type==4">
+
+                                            {{item.require_title}}
+
                                             <div class="corr_ans">
-                                                锚杆主要通过 将围岩中一定范围岩体的应力状态由单向（或双向）受压转变为三向受压，从而提高其环向抗压强度。锚杆主要通过
-                                                将围岩中一定范围岩体的应力状态由单向（或双向）受压转变为三向受压，从而提高其环向抗压强度。锚杆主要通过
-                                                将围岩中一定范围岩体的应力状态由单向（或双向）受压转变为三向受压，从而提高其环向抗压强度。
+                                                {{item.require_content}}
                                             </div>
-                                            <div class="corr_score">评分：<input type="text"></div>
+                                        </div>
+                                        <div class="corr_score" v-if="item.require_type!=2">评分：<input type="text"
+                                                v-model="item.require_score"></div>
+                                        <div class="save_btn">
+                                            <div class="light_btn" @click="saveReqScore(item.require_type)">保存</div>
+                                            <div class="light_btn">下一位</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="view_report">报告：<a href="javascript:;">在线预览</a></div>
-                                <div class="corr_score">评分：<input type="text"></div>
-                                <div class="save_btn">
-                                    <div class="light_btn">保存</div>
-                                    <div class="light_btn">下一位</div>
-                                </div>
-                            </div>
+                                </el-tab-pane>
+                            </el-tabs>
+
 
                         </div>
                         <!-- 小组学生信息 -->
@@ -601,14 +621,15 @@
                                         </el-table-column>
                                         <el-table-column align="center" prop="complete_time" label="提交时间">
                                         </el-table-column>
-                                        <el-table-column align="center" label="成绩" show-overflow-tooltip>
+                                        <el-table-column align="center" label="当前状态" show-overflow-tooltip>
                                             <template slot-scope="scope">{{
                                                 scope.row.experiment_status | stuFilter
                                                 }}</template>
                                         </el-table-column>
                                         <el-table-column align="center" label="操作">
                                             <template slot-scope="props">
-                                                <el-tooltip class="item" effect="dark" content="批改" placement="top">
+                                                <el-tooltip v-if="props.row.experiment_status==1" class="item"
+                                                    effect="dark" content="批改" placement="top">
                                                     <i class='el-icon-edit-outline icon'
                                                         @click="editStu(props.row)"></i>
                                                 </el-tooltip>
