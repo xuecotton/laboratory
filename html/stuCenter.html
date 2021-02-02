@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验平台学生中心</title>
+    <link rel="stylesheet" href="../css/stuCenter.css">
+    <link rel="stylesheet" href="../css/element.css">
+    <style>
+        .login_con .el-tabs__active-bar,
+        .zhu_con .el-tabs__active-bar {
+            width: 36px !important;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .login_con .el-tabs__nav-wrap::after,
+        .zhu_con .el-tabs__nav-wrap::after {
+            background-color: #ffffff;
+        }
+
+        .login_con .el-tabs__item,
+        .zhu_con .el-tabs__item {
+            font-size: 18px;
+        }
+
+        .login_con .el-select-dropdown,
+        .zhu_con .el-tabs__item {
+            z-index: 10000 !important;
+        }
+
+        .cent .el-tabs__nav {
+            margin-left: 20px;
+            height: 60px;
+            line-height: 60px;
+        }
+
+        .cent .el-tabs__item {
+            font-size: 16px;
+        }
+
+        .cent .el-tabs__item.is-active {
+            color: #00b1fb;
+        }
+
+        .cent .el-tabs__active-bar {
+            width: 64px !important;
+            height: 4px;
+            background-color: #00b1fb;
+        }
+
+        .shi .el-tabs__active-bar {
+            width: 48px !important;
+        }
+
+        .cent .el-tabs__item:hover {
+            color: #00b1fb !important;
+        }
+
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 140px;
+            height: 140px;
+            line-height: 140px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            display: block;
+        }
+
+        .el-table thead.is-group th {
+            background-color: #eeeeee !important;
+        }
+
+        .el-table .cell {
+            text-align: center;
+        }
+
+        .el-button--mini,
+        .el-button--small {
+            font-size: 14px;
+        }
+
+        .el-button--text {
+            color: #00b1fb;
+        }
+
+        .el-button--text:focus,
+        .el-button--text:hover {
+            color: #0398d6;
+        }
+
+        .el-table .hidden-row {
+            display: none !important;
+        }
+
+        .answer_btn .el-button--primary{
+            background-color:  #cccccc;
+            border-color: #cccccc;
+        }
+        .yan .el-button--mini, .yan .el-button--small{
+            font-size: 14px;
+        }
+        .answer_btn .el-button--mini, .answer_btn .el-button--small{
+            font-size: 16px;
+            border-radius: 2px;
+        }
+        .answer_btn .upload-demo{
+            display: inline-block;
+        }
+        .answer_btn .el-button--small, .el-button--small.is-round{
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+        .answer_btn .el-button{
+            border: none;
+            line-height: normal;
+        }
+        .answer_btn .el-button--primary:focus, .el-button--primary:hover{
+            background: #00b1fb;
+            border-color: #00b1fb;
+        }
+        .el-upload-list{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- nav_start -->
+        <header class="nav">
+            <div class="center">
+                <div class="logo">
+                    <a href="#">
+                        <img src="../img//logo.png" alt="">
+                    </a>
+                </div>
+                <div class="user us_center">
+                    <el-dropdown :hide-on-click="false" @command="handleCommand">
+                        <div class="hea">
+                            <div class="head_portrait">
+                                <img :src="baseURL+head_portrait" onerror="this.src=''" alt="" />
+                            </div>
+                            <div class="info">{{student_name}}</div>
+                        </div>
+                        <div class="submenu">
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="a">个人中心</el-dropdown-item>
+                                <el-dropdown-item command="c">首页</el-dropdown-item>
+                                <el-dropdown-item command="b">退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </div>
+                    </el-dropdown>
+                </div>
+            </div>
+        </header>
+        <!-- nav_end -->
+        <!-- left_tab_start -->
+        <div class="con band">
+            <div class="bandNav">
+                <div class="navItem first">
+                    <a href="#d1">个人信息</a>
+                </div>
+                <div class="navItem">
+                    <a href="#d2">我的实验</a>
+                </div>
+            </div>
+            <!-- 个人信息开始 -->
+            <div class="navCont" id="d1">
+                <div class="contTitle">
+                    <div class="own">个人信息</div>
+                </div>
+                <div class="cent">
+                    <template>
+                        <el-tabs v-model="LeftTabName" @tab-click="LeftTabClick">
+                            <el-tab-pane label="基本信息" name="first">
+                                <div class="cont jiben">
+                                    <div>
+                                        <div>
+                                            <div class="line ding">
+                                                <div class="lineTitle">姓名:</div>
+                                                <div>{{student_name}}</div>
+                                            </div>
+                                            <div class="line ding">
+                                                <div class="lineTitle">学号:</div>
+                                                <div>{{student_id}}</div>
+                                            </div>
+                                            <div class="line read">
+                                                <div class="lineTitle">专业:</div>
+                                                <div>
+                                                    <input :disabled="readonly" type="text" placeholder="请输入专业名称"
+                                                        v-model="major">
+                                                </div>
+                                            </div>
+                                            <div class="line read">
+                                                <div class="lineTitle">班级:</div>
+                                                <div>
+                                                    <input :disabled="readonly" type="text" placeholder="请输入班级"
+                                                        v-model="grade">
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">手机号:</div>
+                                                <div>{{iphone}}</div>
+                                                <div class="xiu_phone" @click="toPhone">修改</div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="xiu">
+                                                    <div class="btn_save" @click="saveStudent()">确认</div>
+                                                    <!-- <div class="btn_cancel">取消</div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cont_r" style="width: 180px;">
+                                            <el-upload class="avatar-uploader" :action="imgurl" :show-file-list="false"
+                                                :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                                                <img v-if="head_portrait" :src="baseURL+head_portrait" class="avatar">
+                                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                            </el-upload>
+                                            <div class="btn_edit" v-if="head_portrait">修改头像</div>
+                                            <div class="btn_edit" v-else>上传头像</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="密码管理" name="second">
+                                <div class="cont password" style="display: block;">
+                                    <div>
+                                        <div class="cont_l">
+                                            <div class="error">
+                                                <div class="msg_error" v-if="errorStatus">
+                                                    {{errorMsg}}，请重新输入！
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">旧密码:</div>
+                                                <div>
+                                                    <input type="password" placeholder="请输入旧密码"
+                                                        v-model="pswForm.old_password">
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">新密码:</div>
+                                                <div>
+                                                    <input type="password" placeholder="请输入新密码" @blur="pswblur(1)"
+                                                        v-model="pswForm.new_password">
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">确认新密码:</div>
+                                                <div>
+                                                    <input type="password" placeholder="请确认新密码"
+                                                        v-model="pswForm.confirm_password">
+                                                </div>
+                                            </div>
+                                            <div class="lineText">密码由8-16位字符（字母、数字、_@#.特殊字符）组成!</div>
+                                            <div class="line">
+                                                <div class="xiu">
+                                                    <div class="btn_save" @click="editPassword">保存</div>
+                                                    <!-- <div class="btn_cancel">取消</div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="手机管理" name="third">
+                                <div class="cont password" style="display: block;">
+                                    <div>
+                                        <div class="cont_l">
+                                            <div class="error">
+                                                <div class="msg_error" v-if="errorStatus">
+                                                    {{errorMsg}}，请重新输入！
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">验证密码:</div>
+                                                <div>
+                                                    <input type="password" placeholder="请输入验证密码"
+                                                        v-model="phoneForm.password">
+                                                </div>
+                                            </div>
+                                            <div class="line">
+                                                <div class="lineTitle">新手机号:</div>
+                                                <div>
+                                                    <input type="text" placeholder="请输入新手机号" v-model="phoneForm.iphone">
+                                                </div>
+                                            </div>
+                                            <div class="lineText"></div>
+                                            <div class="line">
+                                                <div class="xiu">
+                                                    <div class="btn_save" @click="editPhone">保存</div>
+                                                    <!-- <div class="btn_cancel">取消</div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                </div>
+            </div>
+            <!-- 个人信息结束 -->
+            <!-- 我的实验开始 -->
+            <div class="navCont" id="d2">
+                <div id="1" class="myLab" style="display: block;">
+                    <div class="contTitle">
+                        <div class="contFlex">
+                            <div class="my_title">我的实验</div>
+                            <div class="search_yan">
+                                <div class="create">添加实验：</div>
+                                <div class="search_input">
+                                    <input v-model="experiment_code" maxlength="4" type="number" placeholder="请输入实验码">
+                                    <div @click="addClass">
+                                        <a href="javascript:;">查询</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cent shi">
+                        <template>
+                            <el-tabs v-model="RightTabName" @tab-click="RightTabClick">
+                                <el-tab-pane label="待完成" name="first">
+                                    <div class="yan">
+                                        <template>
+                                            <el-table :data="todoData" :row-class-name="tableRowtodoData"
+                                                :header-cell-style="{background:'#eeeeee',color:'#333333'}"
+                                                style="width: 100%">
+                                                <el-table-column label="实验" width="300">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_pic">
+                                                                <img :src="props.row.head_pic" alt="" />
+                                                            </div>
+                                                            <div class="yan_text">{{props.row.experiment_name}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_group_name" label="小组名称">
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_code" label="实验码">
+                                                </el-table-column>
+                                                <el-table-column label="时间" width="200">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_text">{{props.row.start_time}}</div>至
+                                                            <div class="yan_text">{{props.row.end_time}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_status" label="状态">
+                                                    <template slot-scope="scope">
+                                                        <p v-if="todoData[scope.$index].experiment_status==0">待完成</p>
+                                                        <!-- <p v-if="todoData[scope.$index].experiment_status==1">已完成</p>
+                                                        <p v-if="todoData[scope.$index].experiment_status==2">已过期</p> -->
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column label="操作">
+                                                    <template slot-scope="scope">
+                                                        <el-button @click="TeamClick(scope.row.experiment_group_id)"
+                                                            type="text" size="small">去答题</el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                            <!-- 分页 -->
+                                            <div class="block">
+                                                <el-pagination background @current-change="handleCurrentChange"
+                                                    :page-size="pageSize" layout="prev, pager, next" :total="total">
+                                                </el-pagination>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </el-tab-pane>
+                                <el-tab-pane label="已完成" name="second">
+                                    <div class="yan">
+                                        <template>
+                                            <el-table :data="doneData" :row-class-name="tableRowdoneData"
+                                                :header-cell-style="{background:'#eeeeee',color:'#333333'}"
+                                                style="width: 100%">
+                                                <el-table-column label="实验" width="300">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_pic">
+                                                                <img :src="props.row.head_pic" alt="" />
+                                                            </div>
+                                                            <div class="yan_text">{{props.row.experiment_name}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_group_name" label="小组名称" width="180">
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_code" label="实验码">
+                                                </el-table-column>
+                                                <el-table-column label="时间" width="200">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_text">{{props.row.start_time}}</div>至
+                                                            <div class="yan_text">{{props.row.end_time}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_status" label="状态">
+                                                    <template slot-scope="scope">
+                                                        <p v-if="todoData[scope.$index].experiment_status==1">已完成</p>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="totle_score" label="成绩">
+                                                </el-table-column>
+                                            </el-table>
+                                            <!-- 分页 -->
+                                            <div class="block">
+                                                <el-pagination background @current-change="handleCurrentChange"
+                                                    :page-size="pageSize" layout="prev, pager, next" :total="total">
+                                                </el-pagination>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </el-tab-pane>
+                                <el-tab-pane label="已过期" name="third">
+                                    <div class="yan">
+                                        <template>
+                                            <el-table :data="overdueData" :row-class-name="tableRowoverdueData"
+                                                :header-cell-style="{background:'#eeeeee',color:'#333333'}"
+                                                style="width: 100%">
+                                                <el-table-column label="实验" width="300">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_pic">
+                                                                <img :src="props.row.head_pic" alt="" />
+                                                            </div>
+                                                            <div class="yan_text">{{props.row.experiment_name}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_group_name" label="小组名称" width="180">
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_code" label="实验码">
+                                                </el-table-column>
+                                                <el-table-column label="时间" width="200">
+                                                    <template slot-scope="props">
+                                                        <div class="yan_all">
+                                                            <div class="yan_text">{{props.row.start_time}}</div>至
+                                                            <div class="yan_text">{{props.row.end_time}}</div>
+                                                        </div>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column prop="experiment_status" label="状态">
+                                                    <template slot-scope="scope">
+                                                        <p v-if="todoData[scope.$index].experiment_status==2">已过期</p>
+                                                    </template>
+                                                </el-table-column>
+                                                <!-- <el-table-column label="操作">
+                                                    <template slot-scope="scope">
+                                                        <i class="el-icon-delete icon"></i>
+                                                    </template>
+                                                </el-table-column> -->
+                                            </el-table>
+                                            <!-- 分页 -->
+                                            <div class="block">
+                                                <el-pagination background @current-change="handleCurrentChange"
+                                                    :page-size="pageSize" layout="prev, pager, next" :total="total">
+                                                </el-pagination>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </template>
+                    </div>
+                </div>
+                <!-- 添加实验结束 -->
+                <!-- 答题2开始 -->
+                <div id="2" class="answer" style="display: none;">
+                    <div class="contTitle">
+                        <div class="contFlex">
+                            <div class="cont_icon">
+                                <i @click="back" class="el-icon-arrow-left icon_left"></i>
+                            </div>
+                            <div class="Submit">
+                                <div class="sub">
+                                    <div class="tijiao" @click="completeStu">提交</div>
+                                    <div class="sub_pic"><img src="../img/tj.png" alt=""></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cent">
+                        <div class="dati">
+                            <div class="det_text">
+                                <div class="det_title">
+                                    {{experiment_group_name}}
+                                </div>
+                                <div class="det_jian">
+                                    <div>老师：{{teacher_name}}</div>
+                                    <div>时间：{{start_time}} 至 {{end_time}}</div>
+                                </div>
+                                <div class="det_cont">
+                                    本次实验成绩总分：<div v-for="(it,inx) of require_list" v-if="require_list">
+                                        <span>{{it.require_title}}：</span><span>{{it.require_weight}}%</span></div>
+                                </div>
+                                <div class="answer_btn">
+                                    <div class="backg"><a :href="experiment_url" target="_blank">开始实验</a></div>
+                                    <div v-for="(item,index) of require_list" v-if="require_list">
+                                        <div v-if="item.require_type=='1'">
+                                            <el-upload class="upload-demo"
+                                                :action="upLoadFile"
+                                                :on-success="handleSuccess" 
+                                                :file-list="fileList">
+                                                <el-button size="small" type="primary">{{item.require_title}}</el-button>
+                                            </el-upload>
+                                            <div @click="download(item.require_content)" class="bao backg">下载实验报告模板</div>
+                                        </div>
+                                        <div @click="gotoTest()" class="backg" v-if="item.require_type=='2'">{{item.require_title}}</div>
+                                        <!-- <div class="backg" v-if="item.require_type=='4'">{{item.require_title}}</div> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="det_pic">
+                                <img src="../img/1.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 答题2结束 -->
+            </div>
+            <!-- 我的实验结束 -->
+        </div>
+        <!-- left_tab_end -->
+        <!-- footer_start -->
+        <footer class="footer">
+            版权所有：华北水利水电大学 | 豫ICP备05002494-1 | 豫公网安备 41010702002321号
+        </footer>
+        <!-- footer_end -->
+        <!-- login_start -->
+        <div class="login_box" id="p1">
+            <div class="login_con">
+                <template>
+                    <el-tabs v-model="LoginName" @tab-click="LoginClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="log_stu">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" style="display: b;">
+                                            账号或密码错误，请重新输入！
+                                        </div>
+                                        <div class="forget_err" style="display: none;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div class="log_btn">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="./reg.html">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="log_tea">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" style="display: none;">
+                                            账号或密码错误，请重新输入！
+                                        </div>
+                                        <div class="forget_err" style="display: block;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div class="log_btn">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="./reg.html">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_d"></div>
+            </div>
+        </div>
+        <!-- login_end -->
+        <!-- reg_start -->
+        <div class="zhu_box" id="p2">
+            <div class="zhu_con">
+                <template>
+                    <el-tabs v-model="activeName" @tab-click="handleClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="zhu_stu">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入真实姓名">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入学号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码">
+                                </div>
+                                <div class="zhu_btn">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="zhu_tea">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入教师姓名">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入工号">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码">
+                                </div>
+                                <div class="zhu_btn">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_z"></div>
+            </div>
+        </div>
+        <!-- reg_end -->
+    </div>
+</body>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../js/element.js"></script>
+<script src="../js/jquery-1.12.4.js"></script>
+<script src="../js/pub.js"></script>
+<script src="../js/stuCenter.js"></script>
+<script>
+    // 左侧导航栏选择
+    $(document).ready(function () {
+        $(".navItem").each(function (index) {
+            $(this).click(function () {
+                $(".navItem").removeClass("first");
+                $(".navItem").eq(index).addClass("first");
+            });
+        });
+    });
+    window.location.href = "#d1";
+
+    function getUrlParams(name) { // 不传name返回所有值，否则返回对应值
+            var url = window.location.search;
+            if (url.indexOf('?') == 1) { return false; }
+            url = url.substr(1);
+            url = url.split('&');
+            var name = name || '';
+            var nameres;
+            // 获取全部参数及其值
+            for(var i=0;i<url.length;i++) {
+                var info = url[i].split('=');
+                var obj = {};
+                obj[info[0]] = decodeURI(info[1]);
+                url[i] = obj;
+            }
+            // 如果传入一个参数名称，就匹配其值
+            if (name) {
+                for(var i=0;i<url.length;i++) {
+                    for (const key in url[i]) {
+                        if (key == name) {
+                            nameres = url[i][key];
+                        }
+                    }
+                }
+            } else {
+                nameres = url;
+            }
+            // 返回结果
+            return nameres;
+        }
+
+        var res=getUrlParams('id');
+        var experiment_group_id=getUrlParams('d')
+        console.log(res)
+        if(res==2){
+            window.location.href="#d2";
+            $('.myLab').css('display', 'none');
+            $('.answer').css('display', 'block');
+            app.experiment_group_id=experiment_group_id;
+            app.selectGroup();
+        }
+</script>
+
+</html>

@@ -22,13 +22,6 @@ ol {
     list-style: none;
 }
 
-html, body, #app{
-    min-height: 100%;
-}
-#app{
-    position: relative;
-}
-
 /* 头部开始 */
 .nav {
     width: 100%;
@@ -53,11 +46,12 @@ html, body, #app{
     height: 40px;
     margin-right: 45px;
 }
+
 /* 未登录状态 */
 .nav_list {
     display: flex;
     justify-content: flex-start;
-    margin-right: 140px;
+    margin-right: 450px;
 }
 
 .nav_list li {
@@ -81,6 +75,7 @@ html, body, #app{
     display: flex;
     justify-content: flex-start;
     line-height: 40px;
+    margin-right: 450px;
 }
 
 .nav_lists li {
@@ -101,7 +96,7 @@ html, body, #app{
 }
 
 .search {
-    width: 348px;
+    width: 349px;
     height: 40px;
     border-radius: 3px;
     border: solid 2px #00b1fb;
@@ -128,12 +123,11 @@ html, body, #app{
 
 .input button {
     width: 88px;
-    height: 41px;
+    height: 40px;
     background-color: #00b1fb;
     color: #fff;
     border: none;
     outline: none;
-    cursor: pointer;
 }
 
 .right_nav a {
@@ -221,145 +215,56 @@ html, body, #app{
     bottom: 0;
 }
 
-/* banner */
-.banner {
-    margin-top: 70px;
-}
-
 /* list_start */
 
 .con {
     width: 1200px;
-    min-height: 1030px;
-    margin: 40px auto 0;
-    padding-bottom: 88px;
+	height: 364px;
+    margin: 100px auto 0;
+	background-color: #ffffff;
+	box-shadow: 0px 12px 16px 0px 
+		rgba(148, 167, 175, 0.2);
+	border-radius: 6px;
 }
 
 .list {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.list_con {
-    width: 280px;
-    background-color: #ffffff;
-    box-shadow: 0px 6px 10px 0px rgba(95, 101, 105, 0.1);
-    border-radius: 6px;
-    margin: 13px;
-    transition: transform 0.3s;
-}
-
-.list_con:nth-child(4n) {
-    margin-right: 0;
-}
-
-.list_con:nth-child(4n+1) {
-    margin-left: 0;
-}
-
-.list_con:hover {
-    box-shadow: 0px 12px 20px 0px rgba(94, 101, 104, 0.15);
-    transform: translate(0, -5px);
-}
-.link{
-    display: block;
-}
-
-.list_con .img {
-    width: 280px;
-    height: 210px;
-}
-
-.doc {
-    padding: 8px 12px;
-
-}
-h2{
-    height:48px;
-    overflow: hidden;
-    font-size: 16px;
-    color:#121212;
-    line-height: 26px;
-}
-.link:hover h2{
-    opacity: .7;
-}
-
-.t_t {
+    width: 1100px;
     display: flex;
     justify-content: space-between;
-    padding:12px 0;
-
+    margin: 0 auto;
 }
 
-.num i {
-    width: 20px;
-    height: 14px;
-    display: block;
-    background-image: url("../img/number.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    opacity: .7;
-    margin: 1px 4px 0 0;
+.det_text{
+    width: 620px;
+    margin-top: 30px;
 }
 
-.collage,
-.n {
-    font-size: 14px;
-    color: #9199a1;
-    opacity: .7;
+.det_title{
+    font-size: 18px;
+	color: #000000;
 }
 
-.num {
+.det_jian{
+    width: 210px;
+    height: 70px;
+    line-height: 70px;
     display: flex;
-    justify-content: flex-end;
-    align-content: center;
+    justify-content: space-between;
+    font-size: 16px;
+	color: #333333;
+	opacity: 0.6;
 }
-.button{
-    position: relative;
-    display: block;
-    width: 110px;
-    height: 44px;
-    line-height: 44px;
-    margin: 20px auto 50px;
-    padding-left: 20px;
-    overflow: hidden;
-    transition: background-color .3s,transform 0.3s;
-    background-color: #00b1fb;
-    border-radius: 6px;
+
+.det_cont{
     font-size: 14px;
-    color: #fff;
+	line-height: 24px;
+	color: #333333;
 }
-.button:hover {
-    background-color: #12a7ff;
-    box-shadow: 0px 12px 20px 0px rgba(94, 101, 104, 0.15);
-    transform: translate(0, -5px);
-}
-.arrow{
-    display: inline-block;
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 36px;
-    height: 36px;
-    background-color: #ffffff;
-    border-radius: 100%;
-    text-align: center;
-    font-size:15px;
-}
-.arrow i{
-    display: inline-block;
-    width:19px;
-    height:15px;
-    background-image: url("../img/arrow.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    margin-left: -3px;
-    margin-bottom: 2px;
-}
-.button:hover .arrow i{
-    background-image: url("../img/arrowj.png");
-    margin-left: 3px;
+
+.det_pic{
+    width: 347px;
+    height: 233px;
+    margin: 50px 100px 0 0; 
 }
 
 /* list_end */
@@ -539,3 +444,6 @@ input::-webkit-outer-spin-button,
     color: #4f546a;
 } 
 /* 注册结束 */
+
+
+

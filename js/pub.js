@@ -56,6 +56,7 @@ var pub = {
     // 老师管理
     Teareg: "teacher/reg", //账号注册
     Tealogin: "teacher/login", //账号登录
+    teacherInfo: "teacher/teacherInfo", //查询教师信息
     TeaInfo: "teacher/teacherInfo",//教师信息
     editTeaInfo: "teacher/editTeacher",//修改教师信息
     editPassword: "teacher/editPassword",//修改密码
@@ -94,6 +95,26 @@ var pub = {
 
     addgroup: "group/saveExperimentGroupMember",//学生加进小组
 
+
+
+
+
+    GroupListPageS: "group/experimentGroupListPageS", //实验小组分页列表
+    saveGroupMember: "group/saveExperimentGroupMember", //学生加入实验小组
+    selectGroupInfo: "group/selectExperimentGroupInfoById", //查询实验小组详情
+    download: "group/download", //学生下载模板
+    saveStudenttReport: "group/saveStudentExperimentReport", //学生提交实验报告
+    findQuestionInfo: "questionBank/findQuestionBankInfo", //预览题目
+    saveScoreMember: "group/saveExperimentScoreMember", //学生提交试卷
+    completeStudent: "group/completeExperimentStudent", //学生完成实验
+    findScoreStatus: "group/findScoreStatus", //查询学生试卷答题完成状态
+
+
+
+    // 实验平台部分
+    experimentListPage: "experiment/experimentListPage", //首页实验列表分页
+    findOneList: "experiment/findExperimentCategoryOneList", //实验中心一级分类列表
+    selectExperiment: "experiment/selectExperimentById", //查询实验详情
 
   },
 
@@ -135,7 +156,7 @@ var pub = {
     })
       .then(function (res) {
         if (res.data.code == 401) {
-          // alert("登录已过期")
+          window.location.href = "../401.html"
         } else {
           _op.cbk(res.data);
         }

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验平台在线试题</title>
+    <link rel="stylesheet" href="../css/test.css">
+    <link rel="stylesheet" href="../css/element.css">
+    <style>
+        .el-tabs__active-bar {
+            width: 36px !important;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .el-tabs__nav-wrap::after {
+            background-color: #ffffff;
+        }
+
+        .el-tabs__item {
+            font-size: 18px;
+        }
+
+        .el-select-dropdown {
+            z-index: 10000 !important;
+        }
+
+        .el-radio__label {
+            font-size: 16px;
+            white-space: normal;
+        }
+
+        .el-form-item__content {
+            font-size: 16px;
+        }
+
+        .el-radio {
+            line-height: 40px;
+        }
+
+        .el-form-item {
+            margin: 10px 0 !important;
+        }
+
+        .el-radio__label {
+            font-size: 14px;
+            color: #333333;
+        }
+
+        .el-checkbox__label {
+            color: #333333;
+        }
+
+        .el-textarea {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- nav_start -->
+        <header class="nav">
+            <div class="center">
+                <div class="logo">
+                    <a href="#">
+                        <img src="../img//logo.png" alt="">
+                    </a>
+                </div>
+                <div class="user us_center">
+                    <el-dropdown :hide-on-click="false" @command="handleCommand">
+                        <div class="hea">
+                            <div class="head_portrait">
+                                <img :src="head_portrait" onerror="this.src=''" alt="" />
+                            </div>
+                            <div class="info">{{student_name}}{{teacher_name}}</div>
+                        </div>
+                        <div class="submenu">
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="a">个人中心</el-dropdown-item>
+                                <el-dropdown-item command="c">首页</el-dropdown-item>
+                                <el-dropdown-item command="b">退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </div>
+                    </el-dropdown>
+                </div>
+            </div>
+        </header>
+        <!-- nav_end -->
+        <!-- test_start -->
+        <div class="test">
+            <div class="contTitle">
+                <div class="contFlex">
+                    <div class="title">{{question_bank_name}}</div>
+                    <!-- <div class="Submit">
+                        <div class="sub">
+                            <div class="tijiao">提交</div>
+                            <div class="sub_pic"><img src="../img/tj.png" alt=""></div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="show">
+                <div>题量：{{question_count}}</div>
+                <div>总分：{{totle_score}}分</div>
+            </div>
+            <div class="brief_introduce">
+                <el-form ref="mytest_form" :model="mytest_form" label-width="20px">
+                    <!-- 单选 -->
+                    <div v-if="mytest_form.test_arr1">
+                        <h4><span>一、</span>单项选择题</h4>
+                        <template v-for='(item1,index1) of mytest_form.test_arr1'>
+                            <el-form-item>
+                                <div>
+                                    {{item1.question_id}}. <span>{{item1.question_title}}</span><span
+                                        class="fen">（本题{{item1.question_score}}分）</span>
+                                </div>
+                                <el-radio-group v-model="item1.sel">
+                                    <el-radio v-for="(it1,inx1) of item1.question_option" :label="options[inx1]">{{it1}}
+                                    </el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </template>
+                    </div>
+                    <!-- 多选 -->
+                    <div v-if="mytest_form.test_arr2">
+                        <h4><span v-text="mytest_form.test_arr1 ? '二、': '一、'"></span>多项选择题</h4>
+                        <template v-for='(item2,index2) of mytest_form.test_arr2'>
+                            <el-form-item>
+                                <div>
+                                    {{item2.question_id}}. <span>{{item2.question_title}}</span><span
+                                        class="fen">（本题{{item2.question_score}}分）</span>
+                                </div>
+                                <el-checkbox-group v-model="item2.sel">
+                                    <el-checkbox v-for="(it2,inx2) of item2.question_option" :label="options[inx2]">
+                                        {{it2}}
+                                    </el-checkbox>
+                                </el-checkbox-group>
+                            </el-form-item>
+                        </template>
+                    </div>
+                    <!-- 判断 -->
+                    <div v-if="mytest_form.test_arr">
+                        <h4><span
+                                v-text='(mytest_form.test_arr1 && mytest_form.test_arr2) ? "三、" : (!mytest_form.test_arr1 &&  !mytest_form.test_arr2 ? "一、" : "二、")'></span>判断题
+                        </h4>
+                        <template v-for='(item,index) of mytest_form.test_arr'>
+                            <el-form-item>
+                                <div>
+                                    {{item.question_id}}. <span>{{item.question_title}}</span><span
+                                        class="fen">（本题{{item.question_score}}分）</span>
+                                </div>
+                                <el-radio-group v-model="item.sel">
+                                    <el-radio v-for="(it,inx) of item.question_option" :label="options[inx]">{{it}}
+                                    </el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </template>
+                    </div>
+                    <!-- 简答 -->
+                    <div v-if="mytest_form.test_arr3">
+                        <h4><span v-text='arr > 3 ? "四、" : (arr > 2 ? "三、" : (arr > 1 ? "二、" : "一、"))'></span>简答题</h4>
+                        <template v-for='(item3,index3) of mytest_form.test_arr3'>
+                            <el-form-item>
+                                <div>
+                                    {{item3.question_id}}.
+                                    <span>{{item3.question_title}}</span><span>（本题{{item3.question_score}}分）</span>
+                                </div>
+                                <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="item3.textarea">
+                                </el-input>
+                            </el-form-item>
+                        </template>
+                    </div>
+                    <div class="btn_save" @click="saveScore">提交</div>
+                </el-form>
+            </div>
+        </div>
+        <!-- footer_start -->
+        <footer class="footer">
+            版权所有：华北水利水电大学 | 豫ICP备05002494-1 | 豫公网安备 41010702002321号
+        </footer>
+        <!-- footer_end -->
+    </div>
+    <!-- test_end -->
+
+    <!-- login_start -->
+    <div class="login_box" id="p1">
+        <div class="login_con">
+            <template>
+                <el-tabs v-model="LoginName" @tab-click="LoginClick">
+                    <el-tab-pane label="学生" name="first">
+                        <div class="log_stu">
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入手机号">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="请输入密码">
+                            </div>
+                            <div class="error">
+                                <div class="err">
+                                    <div class="msg_error" style="display: block;">
+                                        账号或密码错误，请重新输入！
+                                    </div>
+                                    <div class="forget_err" style="display: none;">
+                                        请联系管理员进行密码找回！
+                                    </div>
+                                </div>
+                                <div class="forget">
+                                    <a href="#">忘记密码？</a>
+                                </div>
+                            </div>
+                            <div class="log_btn">
+                                <a href="#">登录</a>
+                            </div>
+                            <div class="again_zhu">
+                                <a href="./reg.html">立即注册</a>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="教师" name="second">
+                        <div class="log_tea">
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入手机号">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="请输入密码">
+                            </div>
+                            <div class="error">
+                                <div class="err">
+                                    <div class="msg_error" style="display: none;">
+                                        账号或密码错误，请重新输入！
+                                    </div>
+                                    <div class="forget_err" style="display: block;">
+                                        请联系管理员进行密码找回！
+                                    </div>
+                                </div>
+                                <div class="forget">
+                                    <a href="#">忘记密码？</a>
+                                </div>
+                            </div>
+                            <div class="log_btn">
+                                <a href="#">登录</a>
+                            </div>
+                            <div class="again_zhu">
+                                <a href="./reg.html">立即注册</a>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </template>
+            <div class="close" @click="close_d"></div>
+        </div>
+    </div>
+    <!-- login_end -->
+    <!-- reg_start -->
+    <div class="zhu_box" id="p2">
+        <div class="zhu_con">
+            <template>
+                <el-tabs v-model="activeName" @tab-click="handleClick">
+                    <el-tab-pane label="学生" name="first">
+                        <div class="zhu_stu">
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入手机号">
+                            </div>
+                            <div class="ipt">
+                                <input type="text" placeholder="请输入真实姓名">
+                            </div>
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入学号">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="请输入密码">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="确认密码">
+                            </div>
+                            <div class="zhu_btn">
+                                <a href="#">注册</a>
+                            </div>
+                            <div class="again_zhu">
+                                <a href="#">直接登录</a>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="教师" name="second">
+                        <div class="zhu_tea">
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入手机号">
+                            </div>
+                            <div class="ipt">
+                                <input type="text" placeholder="请输入教师姓名">
+                            </div>
+                            <div class="ipt">
+                                <input type="number" placeholder="请输入工号">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="请输入密码">
+                            </div>
+                            <div class="ipt">
+                                <input type="password" placeholder="确认密码">
+                            </div>
+                            <div class="zhu_btn">
+                                <a href="#">注册</a>
+                            </div>
+                            <div class="again_zhu">
+                                <a href="#">直接登录</a>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </template>
+            <div class="close" @click="close_z"></div>
+        </div>
+    </div>
+    <!-- reg_end -->
+    </div>
+</body>
+<script src="../js/vue.js"></script>
+<script src="../js/axios.js"></script>
+<script src="../js/element.js"></script>
+<script src="../js/jquery-1.12.4.js"></script>
+<script src="../js/pub.js"></script>
+<script src="../js/test.js"></script>
+<script>
+    $('.login_d').click(function () {
+        $('#p1').css('display', 'block');
+    })
+    $('.login_z').click(function () {
+        $('#p2').css('display', 'block');
+    })
+</script>
+
+</html>

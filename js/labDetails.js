@@ -37,25 +37,21 @@ var app = new Vue({
         head_portrait:'', //头像
         student_name:'', //学生姓名
         teacher_name:'', //教师姓名
-        // 首页列表
-        pageSize:12,//分页大小
-        pageNum:1, //页码
-        tabledata:[],
-        imgurl:'',
-        // 搜索框查询
-        experiment_name:'', //实验名称
         // 查询实验详情
         experiment_id:'', //实验id
+        experiment_name:'', //实验名称
+        category_one_name:'', //专业名称
+        experiment_admin:'', //实验负责人
+        experiment_desc:'', //实验介绍
+        experiment_video:'', //实验视频
     },
-    created(){ 
-        this.ListPage();
-        this.imgurl=pub._url; //实验图片路径前缀
-        
+    created() {
+        this.queryDetails();
+
         var user_id=sessionStorage.getItem("user_id")
         var user_type=sessionStorage.getItem("user_type")
         console.log('user_id:'+user_id)
         console.log('user_type:'+user_type)
-        
         this.user_id=user_id;
         this.user_type=user_type;
         if (null==user_id || user_id==""){
@@ -64,36 +60,34 @@ var app = new Vue({
             this.downLogin=false;
             this.onLogin=true;
             this.user_id=user_id;
-            if(this.user_type=='student'){
-                // console.log(this.user_type)
+            // 判断是老师还是学生，查询不同身份信息
+            if(this.user_type=="student"){
                 this.judgeStu();
             }else if(this.user_type=='teacher'){
-                // console.log(this.user_type)
                 this.judgeTea();
             }
         }  
     },
-    methods: {  
+    methods: {
         //查询实验详情
-        queryDetails(experiment_id){
-            this.experiment_id=experiment_id;
-            window.location.href='../html/labDetails.html?b='+ this.experiment_id;
-        },
-        // 搜索框搜索实验
-        getExperiment(){
-            window.location.href='../html/labCenter.html?a='+ encodeURI(this.experiment_name);
-        },
-        // 实验分页
-        ListPage(){
+        queryDetails(){
             var _this = this;
+            if(getQueryVariable('b')!=''){
+                _this.experiment_id=getQueryVariable('b');
+            }
             pub._InitAxios({
                 _url: pub._url, //公共接口
-                ur: pub._DetailApi.experimentListPage,//查询学生信息接口
-                data: { "pageSize": _this.pageSize, "pageNum": _this.pageNum },
+                ur: pub._DetailApi.selectExperiment,//查询实验详情
+                data: { "experiment_id": _this.experiment_id },
                 cbk: function cbk(res) {
                     console.log(res);
                     if (res.stateCode == 200 && res.stateMsg == "success") {
-                        _this.tabledata=res.page.list;
+                        var e=res.data;
+                        _this.experiment_name=e.experiment_name;
+                        _this.category_one_name=e.category_one_name;
+                        _this.experiment_admin=e.experiment_admin;
+                        _this.experiment_desc=e.experiment_desc;
+                        _this.experiment_video=baseURL + e.experiment_video;
                     }
                 }
             });
@@ -106,7 +100,7 @@ var app = new Vue({
                 ur: pub._DetailApi.studentInfo,//查询学生信息接口
                 data: {"user_id":_this.user_id },
                 cbk: function cbk(res) {
-                    console.log(res);
+                    // console.log(res);
                     if (res.code == 200 && res.msg == "success") {
                         _this.head_portrait=baseURL + res.data.head_portrait;
                         _this.student_name=res.data.student_name;
@@ -311,7 +305,7 @@ var app = new Vue({
                     }
                 });
             }
-        },
+        },  
         // 密码验证
         pswblur(val) {
             //判断正则
@@ -336,10 +330,10 @@ var app = new Vue({
         handleClick(tab, event) {
         },
         close_d(){
-            window.location.href='../index.html'
+            window.location.href='../html/labDetails.html'
         },
         close_z(){
-            window.location.href='../index.html'
+            window.location.href='../html/labDetails.html'
         },
         //点击跳转个人中心页面
         handleCommand(command) {
@@ -347,6 +341,8 @@ var app = new Vue({
                 window.location.href = '../html/stuCenter.html?user_id='+this.user_id;
             }else if(command=='a' && this.user_type=='teacher'){
                 window.location.href = '../html/user.html?user_id='+this.user_id;
+            }else if(command=='c'){
+                window.location.href = '../index.html?user_id='+this.user_id;
             }else{
                 this.user_id="";
                 this.user_type="";

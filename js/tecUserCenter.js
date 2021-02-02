@@ -5,9 +5,10 @@ var app = new Vue({
     data: {
         // 教师信息
         user_msg: "",
-        userInfo: {
-            user_id: "UI3C1Jdst3vcc",
-        },
+        // userInfo: {
+        //     user_id: "UI3C1Jdst3vcc",
+        // },
+        userInfo: "",
         pswForm: {// 修改密码表单
             old_password: "",
             new_password: "",
@@ -192,7 +193,7 @@ var app = new Vue({
     created() {
         this.init();
         this.getExperList();
-        console.log(this.actExpItem, this.actExpIndex);
+        // console.log(this.actExpItem, this.actExpIndex);
     },
     methods: {
         // tab切换时触发
@@ -209,18 +210,21 @@ var app = new Vue({
         // 获取信息回调
         init: function () {
             var _this = this;
-            sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo))
+            // sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo))
             // 判断session状态是否登陆，未登录跳转到主页
-            var ssinfo = JSON.parse(sessionStorage.getItem('userInfo'));
+            var ssinfo = { user_id: JSON.parse(sessionStorage.getItem('user_id')) };
+            console.log(ssinfo);
             if (null !== ssinfo || "" !== ssinfo) {
-                _this.userInfo = ssinfo
+                _this.userInfo = ssinfo;
+                console.log(_this.userInfo);
+                // console.log(_this.userInfo);
                 pub._InitAxios({
                     _url: pub._url, //公共接口
                     ur: pub._DetailApi.TeaInfo,
                     data: _this.userInfo,
                     cbk: function (res) {
                         res.data.head_portrait = res.data.head_portrait.replace(/^/, baseURL)
-                        this.user_msg = res.data;
+                        _this.user_msg = res.data;
                     },
                     cat: function (cat) {
                         _this.$message({
@@ -759,7 +763,7 @@ var app = new Vue({
         },
         // 题库预览
         preView(row) {
-            window.open("./preView.html?question_bank_id=" + row.question_bank_id, '_blank')
+            window.open("./test.html?a=" + row.question_bank_id, '_blank')
             // window.location.href = "./preView.html?question_bank_id=" + row.question_bank_id;
         },
 
@@ -1285,8 +1289,58 @@ var app = new Vue({
 
 
         },
+        preStu() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.selectStu,
+                data: {
+                    "user_id": _this.StuSubmitCont.before_user_id,
+                    "experiment_group_id": _this.theStudent.experiment_group_id
+                },
+                cbk: function (res) {
+                    console.log(res);
+                    _this.StuSubmitCont = res.data;
+                    _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
+                        return Object.assign(item, { theScore: '' })
+                    })
+                    console.log(_this.StuShortAnswer);
 
-        handleCommand() { },
+                },
+                cat: function (cat) {
+                }
+            });
+        },
+        nextStu() {
+            var _this = this;
+            pub._InitAxios({
+                _url: pub._url, //公共接口
+                ur: pub._DetailApi.selectStu,
+                data: {
+                    "user_id": _this.StuSubmitCont.after_user_id,
+                    "experiment_group_id": _this.theStudent.experiment_group_id
+                },
+                cbk: function (res) {
+                    console.log(res);
+                    _this.StuSubmitCont = res.data;
+                    _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
+                        return Object.assign(item, { theScore: '' })
+                    })
+                    console.log(_this.StuShortAnswer);
+                },
+                cat: function (cat) {
+                }
+            });
+        },
+        handleCommand(com) {
+            if (com == "a") {
+                window.location.reload();
+            } else if (com == 'b') {
+                sessionStorage.removeItem("user_id");
+                sessionStorage.removeItem("user_type");
+                window.location.href = "../index.html"
+            }
+        },
 
         handleSelectionChange(val) {
             this.multipleSelection = val;
