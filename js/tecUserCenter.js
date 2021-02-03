@@ -559,7 +559,7 @@ var app = new Vue({
                             question_option: [],
                             question_score: "",
                             question_title: "",
-                            question_type_name: "",
+                            question_type_name: _this.TestTypeIndex == 4 ? "简答题" : '',
                             uuid: "",
                         },
                             _this.testBox.push(_this.testBoxItem)
@@ -586,6 +586,8 @@ var app = new Vue({
                 this.testBoxItem.question_option = ["正确", "错误"]
             } else if (this.TestItemIndex == 2) {
                 this.testBoxItem.question_answer = [];
+            } else if (this.TestItemIndex == 4) {
+                this.testBoxItem.question_type_name == '简答题'
             }
         },
         showTestItem(it) {
@@ -601,7 +603,7 @@ var app = new Vue({
                 question_option: [],
                 question_score: "",
                 question_title: "",
-                question_type_name: "",
+                question_type_name: this.TestTypeIndex == 4 ? "简答题" : '',
                 uuid: "",
             };
             this.testBox.push(this.testBoxItem)
@@ -618,42 +620,61 @@ var app = new Vue({
         // 保存完整的一道题
         saveOneTest() {
             var _this = this;
+            var _type = true;
             console.log(_this.testBoxItem);
-            //  if(_this.testBoxItem.question_answer=='' || _this.testBoxItem.question_answer.length<1){
-            //     _this.$message({
-            //         message: '未选择正确答案',
-            //         type: 'info'
-            //     })
-            //      return false;
-            //  } else if (_this.testBoxItem.question_title=="" || _this.testBoxItem.question_option.length<1) {
+            _type = (_this.testBoxItem.question_type_name == '简答题' ? true : false)
+            console.log(_type);
+            if ((_this.testBoxItem.question_answer == '' || _this.testBoxItem.question_answer.length < 1) && !_type) {
+                _this.$message({
+                    message: '当前题目未选定正确答案',
+                    type: 'info'
+                })
+                return false;
+            } else if (_this.testBoxItem.question_title == "") {
+                _this.$message({
+                    message: '当前题目未给题目内容',
+                    type: 'info'
+                })
+                return false;
+            } else if (_this.testBoxItem.question_option.length < 1 && !_type) {
+                _this.$message({
+                    message: '当前题目未给定选项',
+                    type: 'info'
+                })
+                return false;
+            } else if (_this.testBoxItem.question_score == "") {
+                _this.$message({
+                    message: '当前题目未给定分数',
+                    type: 'info'
+                })
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: _this.testBoxItem.uuid ? pub._DetailApi.editOneTest : pub._DetailApi.addOneTest,
+                    data: { "question_bank_id": _this.EditQid, ..._this.testBoxItem, "question_type_id": _this.TestTypeIndex },
+                    cbk: function (res) {
+                        _this.getTestTypeCon();
+                        // _this.testBox = res.data;
+                        // _this.testBoxItem = _this.testBox[0]
+                        // _this.testBoxItem = _this.testBox[_this.testBoxItem.question_id - 1]
+                        console.log(_this.testBoxItem);
+                        _this.$message({
+                            message: '保存成功',
+                            type: 'success'
+                        })
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '操作失败',
+                            type: 'info'
+                        })
+                    }
+                });
+            };
 
-            //  } else if (_this.question_score == "") {
-
-            // };
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: _this.testBoxItem.uuid ? pub._DetailApi.editOneTest : pub._DetailApi.addOneTest,
-                data: { "question_bank_id": _this.EditQid, ..._this.testBoxItem, "question_type_id": _this.TestTypeIndex },
-                cbk: function (res) {
-                    _this.getTestTypeCon();
-                    // _this.testBox = res.data;
-                    // _this.testBoxItem = _this.testBox[0]
-                    // _this.testBoxItem = _this.testBox[_this.testBoxItem.question_id - 1]
-                    console.log(_this.testBoxItem);
-                    _this.$message({
-                        message: '保存成功',
-                        type: 'info'
-                    })
-                },
-                cat: function (cat) {
-                    _this.$message({
-                        message: '操作失败',
-                        type: 'info'
-                    })
-                }
-            });
         },
         delOneTest(i) {
+            var _this = this;
             pub._InitAxios({
                 _url: pub._url, //公共接口
                 ur: pub._DetailApi.delOneTest,

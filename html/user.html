@@ -403,8 +403,8 @@
                             <div class="title">
                                 <div class="back" @click="showExperList=1"><img src="../img/back.png" alt=""></div>
                                 <div class="test_btn">
-                                    <div class="handleBtn">发布<img src="../img/submit.png" alt=""><img
-                                            src="../img/submit.png" alt=""></div>
+                                    <!-- <div class="handleBtn">发布<img src="../img/submit.png" alt=""><img
+                                            src="../img/submit.png" alt=""></div> -->
                                 </div>
                             </div>
                             <div class="exper_content">
@@ -452,6 +452,7 @@
                                                             </el-upload>
                                                             <a :href="item.require_content | addBaseurl"
                                                                 target='_blank'>{{item.require_content}}</a>
+
                                                         </div>
                                                         <!-- 考试 -->
                                                         <div v-if="item.require_type=='2'">
@@ -629,7 +630,7 @@
                                         </el-table-column>
                                         <el-table-column align="center" label="操作">
                                             <template slot-scope="props">
-                                                <el-tooltip v-if="props.row.experiment_status==0" class="item"
+                                                <el-tooltip v-if="props.row.experiment_status==1" class="item"
                                                     effect="dark" content="批改" placement="top">
                                                     <i class='el-icon-edit-outline icon'
                                                         @click="editStu(props.row)"></i>

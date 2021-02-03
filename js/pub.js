@@ -33,7 +33,7 @@ function _axios() {
 
 //oracle版本
 
-var baseL = "http://192.168.2.112:80/";
+var baseL = "http://192.168.2.108:80/";
 var projectName = "vr_platform/";
 var baseURL = baseL + projectName;
 // var url = baseURL
