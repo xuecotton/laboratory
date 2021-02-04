@@ -500,7 +500,7 @@
 
                                                     <div v-for="(item,index) in ExpRequire" :key="index"
                                                         class="weight_item">
-                                                        +<span>{{item.require_title}}</span>
+                                                        <a href="javascript:;">+</a><span>{{item.require_title}}</span>
                                                     </div>
                                                     <div class="weight_item">
                                                         =<span>100%</span>
@@ -512,7 +512,8 @@
                                                     </div>
                                                     <div v-for="(item,index) in ExpRequire" :key="index"
                                                         class="weight_item">
-                                                        +<input type="text" v-model="item.require_weight">%
+                                                        <a href="javascript:;">+</a><input type="text"
+                                                            v-model="item.require_weight">%
                                                     </div>
                                                     <div class="weight_item">
                                                         =<span>100%</span>

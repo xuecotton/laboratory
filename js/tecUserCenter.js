@@ -191,6 +191,7 @@ var app = new Vue({
         tabPosition: 'right',
     },
     created() {
+
         this.init();
         this.getExperList();
         // console.log(this.actExpItem, this.actExpIndex);
@@ -214,7 +215,7 @@ var app = new Vue({
             // 判断session状态是否登陆，未登录跳转到主页
             var ssinfo = { user_id: JSON.parse(sessionStorage.getItem('user_id')) };
             console.log(ssinfo);
-            if (null !== ssinfo || "" !== ssinfo) {
+            if (null !== ssinfo.user_id && "" !== ssinfo.user_id) {
                 _this.userInfo = ssinfo;
                 console.log(_this.userInfo);
                 // console.log(_this.userInfo);
@@ -983,9 +984,28 @@ var app = new Vue({
                     }
                     break;
             }
-            this.ExpRequire.push(this.requestItem)
-            this.requestType = '';
-            console.log(this.ExpRequire);
+            console.log(this.requestItem);
+            if (this.ExpRequire.length == 0) {
+                this.ExpRequire.push(this.requestItem)
+                this.requestType = '';
+                console.log("走if");
+            } else if (
+                !this.ExpRequire.every((item, index, arr) => {
+                    return (item.require_title != "" && item.require_content != "" && item.require_weight != "")
+                })
+            ) {
+                console.log("走e if");
+                this.$message({
+                    message: '请将上一项要求内容填写完整',
+                    type: 'info'
+                })
+                this.requestType = '';
+            } else {
+                console.log("走 e");
+                this.ExpRequire.push(this.requestItem)
+                this.requestType = '';
+            }
+
         },
         // 要求中选择题库
         show_test_list_dioag() {
@@ -1027,34 +1047,42 @@ var app = new Vue({
         saveOrEditGroup() {
             var _this = this;
             console.log(this.isFromNewAdd);
-            for (var i = 0; i < _this.ExpRequire.length; i++) {
-                _this.ExpRequire[i].require_id = i + 1
-            }
-            console.log({ ..._this.ExperContent, "user_id": _this.userInfo.user_id, "experiment_require": _this.ExpRequire });
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: _this.isFromNewAdd ? pub._DetailApi.saveE : pub._DetailApi.editE,
-                // ur: pub._DetailApi.editE,
-                data: {
-                    ..._this.ExperContent,
-                    "user_id": _this.userInfo.user_id,
-                    "experiment_require": _this.ExpRequire
-                },
-                cbk: function (res) {
-                    _this.showExperList = 1;
-                    _this.getExperList();
-                    _this.$message({
-                        message: '保存成功,去发布！',
-                        type: 'success'
-                    })
-                },
-                cat: function (cat) {
-                    _this.$message({
-                        message: '操作失败',
-                        type: 'info'
-                    })
-                }
+            _this.ExpRequire.map((item, index, arr) => {
+                item.require_id = index + 1;
             });
+            if (_this.ExpRequire.reduce((prev, cur, index, arr) => {
+                return prev + parseInt(cur.require_weight);
+            }, 0) != 100) {
+                _this.$message({
+                    message: '实验要求分值占比不是100%，请重新分配各要求权重',
+                    type: 'info'
+                })
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: _this.isFromNewAdd ? pub._DetailApi.saveE : pub._DetailApi.editE,
+                    // ur: pub._DetailApi.editE,
+                    data: {
+                        ..._this.ExperContent,
+                        "user_id": _this.userInfo.user_id,
+                        "experiment_require": _this.ExpRequire
+                    },
+                    cbk: function (res) {
+                        _this.showExperList = 1;
+                        _this.getExperList();
+                        _this.$message({
+                            message: '保存成功,去发布！',
+                            type: 'success'
+                        })
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '操作失败',
+                            type: 'info'
+                        })
+                    }
+                });
+            }
         },
 
         // 发布小组
@@ -1267,6 +1295,7 @@ var app = new Vue({
                 "require_id": type,
                 "require_weight": '',
                 "require_score": "",
+                "experiment_group_id": _this.groupId
             };
             for (let i = 0; i < _this.StuSubmitCont.experiment_require.length; i++) {
                 if (_this.StuSubmitCont.experiment_require[i].require_type == type) {
@@ -1325,7 +1354,7 @@ var app = new Vue({
                     _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
                         return Object.assign(item, { theScore: '' })
                     })
-                    console.log(_this.StuShortAnswer);
+                    // console.log(_this.StuShortAnswer);
 
                 },
                 cat: function (cat) {
@@ -1347,7 +1376,7 @@ var app = new Vue({
                     _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
                         return Object.assign(item, { theScore: '' })
                     })
-                    console.log(_this.StuShortAnswer);
+                    // console.log(_this.StuShortAnswer);
                 },
                 cat: function (cat) {
                 }
