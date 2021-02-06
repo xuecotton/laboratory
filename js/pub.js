@@ -33,7 +33,8 @@ function _axios() {
 
 //oracle版本
 
-var baseL = "http://192.168.2.108:80/";
+// var baseL = "http://192.168.2.108:80/";
+var baseL = "../../"
 var projectName = "vr_platform/";
 var baseURL = baseL + projectName;
 // var url = baseURL
@@ -48,9 +49,10 @@ var pub = {
     Stulogin: "student/login", //账号登录
     studentInfo: "student/studentInfo", //查询学生信息
     editStudent: "student/editStudent", //修改学生信息
-    editPassword: "student/editPassword", //学生修改密码
-    editStudentIphone: "student/editStudentIphone", //修改手机号
+    editStuPassword: "student/editPassword", //学生修改密码
+    editStuIphone: "student/editStudentIphone", //修改手机号
     uploadPic: "student/uploadPic", //上传图片
+    editUpload: "kindeditor/fileUpload",
     downloadreport: "student/download?filename=",
 
     // 老师管理
@@ -156,14 +158,14 @@ var pub = {
     })
       .then(function (res) {
         if (res.data.code == 401) {
-          window.location.href = "../401.html"
+          // window.location.href = "../401.html"
         } else {
           _op.cbk(res.data);
         }
 
       })
       .catch(function (cat) {
-        _op.cat(cat)
+        // _op.cat(cat)
       });
   },
 

@@ -5,8 +5,8 @@
 }
 
 img {
-    width: 100%;
-    height: 100%;
+    /* width: 100%;
+    height: 100%; */
     object-fit: cover;
 }
 
@@ -15,22 +15,24 @@ a {
     color: #333;
 }
 
-ul,
-li,
-ul li,
-ol {
+ul, li, ul li, ol {
     list-style: none;
 }
 
-html, body, #app{
+html, body, #app {
     min-height: 100%;
+    height: 100%;
 }
 
-#app{
+#app {
     position: relative;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
 }
 
 /* 头部开始 */
+
 .nav {
     width: 100%;
     padding: 13px 0;
@@ -125,70 +127,80 @@ html, body, #app{
 }
 
 /* 登录后状态 */
-.center{
+
+.center {
     height: 100%;
     display: flex;
     justify-content: space-between;
     width: 1200px;
     margin: 0 auto;
 }
-.user{
+
+.user {
     display: flex;
 }
-.user ul{
-    display: inline-block;
-	list-style: none;
 
+.user ul {
+    display: inline-block;
+    list-style: none;
 }
-.user li{
+
+.user li {
     display: none;
 }
 
-.us_center{
+.us_center {
     display: flex;
     justify-content: left;
     align-items: center;
     position: relative;
 }
-.us_center .info{
+
+.us_center .info {
     font-size: 16px;
     color: #333333;
 }
-.hea{
+
+.hea {
     display: flex;
     justify-self: start;
     align-items: center;
     cursor: pointer;
 }
 
-.head_portrait{
+.head_portrait {
     border-radius: 50%;
     width: 40px;
     height: 40px;
     overflow: hidden;
-    border: 2px solid rgba(0, 91,172, 0.5);
+    border: 2px solid rgba(0, 91, 172, 0.5);
     position: relative;
     margin-right: 10px;
 }
-.head_portrait img{
+
+.head_portrait img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.submenu{
+
+.submenu {
     width: 100px;
-    background-color:#fff;
+    background-color: #fff;
     box-shadow: 0 0 6px 0 rgba(75, 91, 138, 0.2);
     position: absolute;
-    top:88px;
+    top: 88px;
     text-align: center;
-} 
+}
+
 /* 登录状态结束 */
 
 /* 头部结束 */
+
 /* footer */
-.footer{
-    width:100%;
+
+.footer {
+    width: 100%;
     height: 88px;
     line-height: 88px;
     background-color: #1c1f21;
@@ -199,18 +211,20 @@ html, body, #app{
 }
 
 /* 登录开始 */
-input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-    }
-    input[type="number"]{
-        -moz-appearance: textfield;
-    }
-#p1,#p2{
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+#p1, #p2 {
     display: none;
 }
 
-.login_box{
+.login_box {
     position: fixed;
     top: 0;
     left: 0;
@@ -219,7 +233,8 @@ input::-webkit-outer-spin-button,
     width: 100%;
     height: 100%;
 }
-.zhu_box{
+
+.zhu_box {
     position: fixed;
     top: 0;
     left: 0;
@@ -228,7 +243,8 @@ input::-webkit-outer-spin-button,
     width: 100%;
     height: 100%;
 }
-.login_con{
+
+.login_con {
     width: 380px;
     height: 327px;
     background-color: #ffffff;
@@ -238,31 +254,35 @@ input::-webkit-outer-spin-button,
     padding: 20px 0 20px 40px;
     display: flex;
 }
-.ipt{
+
+.ipt {
     width: 340px;
     height: 40px;
     background-color: #f2f2f2;
     border-radius: 6px;
     margin-top: 20px;
 }
-.ipt input{
+
+.ipt input {
     width: 330px;
     outline: none;
     border: 0;
     line-height: 40px;
     font-size: 16px;
     letter-spacing: 1px;
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     padding-left: 10px;
-	font-size: 16px;
+    font-size: 16px;
     color: #000000;
-    caret-color:#000000;
+    caret-color: #000000;
 }
+
 .ipt input::-webkit-input-placeholder {
     color: #bdc2c7;
     opacity: .7;
 }
-.error{
+
+.error {
     font-size: 12px;
     height: 50px;
     line-height: 50px;
@@ -271,50 +291,61 @@ input::-webkit-outer-spin-button,
     display: flex;
     justify-content: flex-end;
 }
-.msg_error{
-    color:#fa797a;
+
+.msg_error {
+    color: #fa797a;
 }
-.forget_err{
+
+.forget_err {
     color: #8b8e92;
 }
-.forget a{
+
+.forget a {
     color: #00b1fb;
     cursor: pointer;
 }
-.forget a:hover{
+
+.forget a:hover {
     color: #0398d6;
 }
-.log_btn{
+
+.log_btn {
     width: 340px;
-	height: 40px;
-	background-color: #00b1fb;
+    height: 40px;
+    background-color: #00b1fb;
     border-radius: 6px;
     text-align: center;
     cursor: pointer;
 }
-.log_btn:hover{
+
+.log_btn:hover {
     background-color: #0398d6;
 }
-.log_btn a{
+
+.log_btn a {
     font-size: 16px;
-	line-height: 40px;
+    line-height: 40px;
     color: #ffffff;
 }
-.again_zhu{
+
+.again_zhu {
     width: 60px;
     height: 40px;
     font-size: 12px;
     line-height: 40px;
     margin: 20px auto;
 }
-.again_zhu a{
+
+.again_zhu a {
     color: #00b1fb;
     cursor: pointer;
 }
-.again_zhu a:hover{
+
+.again_zhu a:hover {
     color: #0398d6;
 }
-.close{
+
+.close {
     float: right;
     width: 19px;
     height: 19px;
@@ -322,13 +353,16 @@ input::-webkit-outer-spin-button,
     cursor: pointer;
     background-image: url(../img/login_close.png);
 }
-.close:hover{
+
+.close:hover {
     background-image: url(../img/login_closej.png);
 }
+
 /* 登录结束 */
 
 /* 注册开始 */
-.zhu_con{
+
+.zhu_con {
     width: 380px;
     height: 490px;
     background-color: #ffffff;
@@ -338,41 +372,47 @@ input::-webkit-outer-spin-button,
     padding: 20px 0 20px 40px;
     display: flex;
 }
-.zhu_btn{
+
+.zhu_btn {
     width: 340px;
-	height: 40px;
-	background-color: #00b1fb;
+    height: 40px;
+    background-color: #00b1fb;
     border-radius: 6px;
     text-align: center;
     cursor: pointer;
     margin-top: 30px;
 }
-.zhu_btn:hover{
+
+.zhu_btn:hover {
     background-color: #0398d6;
 }
-.zhu_btn a{
+
+.zhu_btn a {
     font-size: 16px;
-	line-height: 40px;
+    line-height: 40px;
     color: #ffffff;
 }
+
 /* 注册结束 */
 
 /* 试题开始 */
 
-.test{
+.test {
     width: 1200px;
-	background-color: #ffffff;
+    background-color: #ffffff;
     border: solid 1px #dddddd;
     margin: 100px auto 0;
     padding-bottom: 88px;
 }
-.contTitle{
+
+.contTitle {
     width: 1200px;
-	height: 60px;
-	background-color: #f9f9f9;
+    height: 60px;
+    background-color: #f9f9f9;
     border-bottom: solid 1px #dddddd;
 }
-.title{
+
+.title {
     width: 480px;
     height: 20px;
     line-height: 60px;
@@ -381,40 +421,47 @@ input::-webkit-outer-spin-button,
     margin: 0 auto;
     text-align: center;
 }
-.contFlex{
+
+.contFlex {
     display: flex;
     justify-content: space-between;
 }
-.Submit{
+
+.Submit {
     width: 80px;
-	height: 30px;
-	background-color: #00b1fb;
+    height: 30px;
+    background-color: #00b1fb;
     border-radius: 2px;
     margin: 15px 30px 0 0;
     cursor: pointer;
 }
-.Submit:hover{
+
+.Submit:hover {
     background-color: #0398d6;
 }
-.sub{
+
+.sub {
     width: 50px;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
 }
-.tijiao{
+
+.tijiao {
     width: 28px;
     height: 14px;
     line-height: 30px;
     font-size: 14px;
-	color: #ffffff;
+    color: #ffffff;
 }
-.sub_pic{
+
+.sub_pic {
     width: 16px;
     height: 16px;
     line-height: 34px;
 }
-.show{
+
+.show {
     width: 200px;
     height: 70px;
     line-height: 70px;
@@ -424,18 +471,21 @@ input::-webkit-outer-spin-button,
     color: #333333;
     margin: 0 auto;
 }
-.brief_introduce{
+
+.brief_introduce {
     padding: 20px 30px;
     color: #333333;
 }
-.fen{
+
+.fen {
     font-size: 14px;
 }
-.btn_save{
+
+.btn_save {
     width: 78px;
     height: 36px;
     line-height: 36px;
-	background-color: #00b1fb;
+    background-color: #00b1fb;
     border-radius: 2px;
     text-align: center;
     font-size: 16px;
@@ -444,7 +494,9 @@ input::-webkit-outer-spin-button,
     margin: 30px auto;
     cursor: pointer;
 }
-.btn_save:hover{
+
+.btn_save:hover {
     background-color: #0398d6;
 }
+
 /* 试题结束 */

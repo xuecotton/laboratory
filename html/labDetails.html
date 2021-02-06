@@ -25,14 +25,61 @@
         .el-select-dropdown {
             z-index: 10000 !important;
         }
+
+        .backg .el-button--text {
+            color: #ffffff;
+        }
+
+        .backg .el-button--text {
+            color: #ffffff;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <!-- nav_start -->
         <!-- 登录状态 -->
-
+        <header class="nav" v-if="onLogin">
+            <div class="center">
+                <div class="logo">
+                    <a href="#">
+                        <img src="../img//logo.png" alt="">
+                    </a>
+                </div>
+                <ul class="nav_lists">
+                    <li>
+                        <a href="../index.html">首页</a>
+                    </li>
+                    <li>
+                        <a href="../html/labCenter.html">
+                            实验中心
+                        </a>
+                    </li>
+                </ul>
+                <div class="user us_center">
+                    <el-dropdown :hide-on-click="false" @command="handleCommand">
+                        <div class="hea">
+                            <div class="head_portrait">
+                                <img :src="head_portrait" onerror="this.src=''" alt="" />
+                            </div>
+                            <div class="info">{{student_name}}{{teacher_name}}</div>
+                        </div>
+                        <div class="submenu">
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="a">个人中心</el-dropdown-item>
+                                <el-dropdown-item command="c">首页</el-dropdown-item>
+                                <el-dropdown-item command="b">退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </div>
+                    </el-dropdown>
+                </div>
+            </div>
+        </header>
         <!-- 未登录状态 -->
         <header class="nav" v-if="downLogin">
             <div class="nav_con">
@@ -41,7 +88,7 @@
                         <img src="../img/logo.png" alt="">
                     </a>
                 </div>
-                <!-- <ul class="nav_list">
+                <ul class="nav_list">
                     <li>
                         <a href="../index.html">首页</a>
                     </li>
@@ -54,7 +101,7 @@
                 <div class="right_nav">
                     <a href="#p1" class="login_d" @click="login_d">登录</a>
                     <a href="#p2" class="login_z" @click="login_z">注册</a>
-                </div> -->
+                </div>
             </div>
         </header>
         <!-- nav_end -->
@@ -72,23 +119,172 @@
                     <div class="det_cont">
                         {{experiment_desc}}
                     </div>
+                    <div class="backg">
+                        <el-button type="text" @click="dialogVisible = true">去做实验</el-button>
+                        <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+                            <div><a class="hov" :href="experiment_url" target="_blank">开始实验</a></div>
+                            <div class="hov" @click="toCenter">去个人中心实验小组做实验</div>
+                        </el-dialog>
+                    </div>
                 </div>
                 <div class="det_pic">
-                    <img :src="experiment_video" alt="">
+                    <video :src="experiment_video" controls :poster="experiment_pic">
                 </div>
             </div>
         </div>
         <!-- list_end -->
         <!-- footer_start -->
         <footer class="footer">
-            <!-- 版权所有：华北水利水电大学 | 豫ICP备05002494-1 | 豫公网安备 41010702002321号 -->
+            版权所有：华北水利水电大学 | 豫ICP备05002494-1 | 豫公网安备 41010702002321号
         </footer>
         <!-- footer_end -->
         <!-- login_start -->
-
+        <div class="login_box" id="p1">
+            <div class="login_con">
+                <template>
+                    <el-tabs v-model="LoginName" @tab-click="LoginClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="log_stu">
+                                <div class="spa">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号/学号" v-model="account_num2"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码" v-model="password2">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" v-if="errorStatus2">
+                                            {{errorMsg2}}，请重新输入！
+                                        </div>
+                                        <div class="forget_mi" style="display: none;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#" @click="forget_mi">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div id="input2" class="log_btn" @click="Studentlog">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu" @click="again_zhu">
+                                    <a href="#">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="log_tea">
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号/工号" v-model="account_num4"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码" v-model="password4">
+                                </div>
+                                <div class="error">
+                                    <div class="err">
+                                        <div class="msg_error" v-if="errorStatus4">
+                                            {{errorMsg4}}，请重新输入！
+                                        </div>
+                                        <div class="forget_err" style="display: none;">
+                                            请联系管理员进行密码找回！
+                                        </div>
+                                    </div>
+                                    <div class="forget">
+                                        <a href="#" @click="forget_ma">忘记密码？</a>
+                                    </div>
+                                </div>
+                                <div id="input4" class="log_btn" @click="Teacherlog">
+                                    <a href="#">登录</a>
+                                </div>
+                                <div class="again_zhu" @click="again_zhu">
+                                    <a href="#">立即注册</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_d"></div>
+            </div>
+        </div>
         <!-- login_end -->
         <!-- reg_start -->
-
+        <div class="zhu_box" id="p2">
+            <div class="zhu_con">
+                <template>
+                    <el-tabs v-model="activeName" @tab-click="handleClick">
+                        <el-tab-pane label="学生" name="first">
+                            <div class="zhu_stu">
+                                <div class="space">
+                                    <div class="msg_error" v-if="errorStatus1">
+                                        {{errorMsg1}}，请重新输入
+                                    </div>
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone1"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入真实姓名" v-model="student_name1">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入学号" v-model="account_num1"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码" v-model="password1" @blur="pswblur(1)">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码" v-model="upassword1">
+                                </div>
+                                <div id="input1" class="zhu_btn" @click="StudentReg()">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu" @click="again_log">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="教师" name="second">
+                            <div class="zhu_tea">
+                                <div class="space">
+                                    <div class="msg_error" v-if="errorStatus3">
+                                        {{errorMsg3}}，请重新输入
+                                    </div>
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone3"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="text" placeholder="请输入教师姓名" v-model="teacher_name3">
+                                </div>
+                                <div class="ipt">
+                                    <input type="number" placeholder="请输入工号" v-model="account_num3"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="请输入密码" v-model="password3" @blur="pswblur(0)">
+                                </div>
+                                <div class="ipt">
+                                    <input type="password" placeholder="确认密码" v-model="upassword3">
+                                </div>
+                                <div id="input3" class="zhu_btn" @click="TeacherReg">
+                                    <a href="#">注册</a>
+                                </div>
+                                <div class="again_zhu" @click="again_log">
+                                    <a href="#">直接登录</a>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </template>
+                <div class="close" @click="close_z"></div>
+            </div>
+        </div>
         <!-- reg_end -->
     </div>
 </body>
@@ -98,15 +294,15 @@
 <script src="../js/jquery-1.12.4.js"></script>
 <script src="../js/pub.js"></script>
 <script src="../js/labDetails.js"></script>
-<!-- <script>
-    $(document).keydown(function(event){
-        if(event.keyCode==13){
+<script>
+    $(document).keydown(function (event) {
+        if (event.keyCode == 13) {
             document.getElementById("input1").click();
             document.getElementById("input2").click();
             document.getElementById("input3").click();
             document.getElementById("input4").click();
         }
     });
-</script> -->
+</script>
 
 </html>

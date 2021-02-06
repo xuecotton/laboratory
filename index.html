@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/element.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/element.css">
     <title>实验平台首页</title>
     <style>
-        /* [v-cloak] {
-      display: none !important;
-    } */
+        [v-cloak] {
+            display: none;
+        }
+
         .el-carousel__item img {
             color: #475669;
             font-size: 18px;
@@ -47,7 +48,8 @@
         .el-tabs__item {
             font-size: 18px;
         }
-        .el-select-dropdown{
+
+        .el-select-dropdown {
             z-index: 10000 !important;
         }
     </style>
@@ -76,7 +78,8 @@
                 </ul>
                 <div class="search">
                     <label class="input">
-                        <input v-model="experiment_name" type="text" maxlength="20" class="Input" placeholder="请输入实验名称" value="">
+                        <input v-model="experiment_name" type="text" maxlength="20" class="Input" placeholder="请输入实验名称"
+                            value="">
                         <button @click="getExperiment">
                             <span>搜索</span>
                         </button>
@@ -120,7 +123,8 @@
                 </ul>
                 <div class="search">
                     <label class="input">
-                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称" value="">
+                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称"
+                            value="">
                         <button @click="getExperiment">
                             <span>搜索</span>
                         </button>
@@ -156,7 +160,8 @@
         <!-- list_start -->
         <div class="con">
             <ul class="list">
-                <li class="list_con" @click="queryDetails(item.experiment_id)" v-for="(item,index) of tabledata" v-if="tabledata">
+                <li class="list_con" @click="queryDetails(item.experiment_id)" v-for="(item,index) of tabledata"
+                    v-if="tabledata">
                     <a href="#" class="link">
                         <div class="img">
                             <img :src="imgurl+item.experiment_pic" alt="">
@@ -179,259 +184,6 @@
                         </div>
                     </a>
                 </li>
-                <!-- <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/2.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/3.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/4.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/2.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/3.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/1.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/3.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/4.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/2.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/1.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li class="list_con">
-                    <a href="#" class="link">
-                        <div class="img">
-                            <img src="./img/3.png" alt="">
-                        </div>
-                        <div class="doc">
-                            <h2>
-                                空调性能故障排查只能模拟仿真系统空调性能故障排查只能模
-                            </h2>
-                            <div class="t_t">
-                                <div class="collage">
-                                    智能制造
-                                </div>
-                                <div class="num">
-                                    <i></i>
-                                    <div class="n">
-                                        1963
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li> -->
             </ul>
             <a href="./html/labCenter.html" class="button">
                 <span>
@@ -458,10 +210,11 @@
                                 <div class="spa">
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号/学号" v-model="account_num2" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号/学号" v-model="account_num2"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password2" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password2">
                                 </div>
                                 <div class="error">
                                     <div class="err">
@@ -487,10 +240,11 @@
                         <el-tab-pane label="教师" name="second">
                             <div class="log_tea">
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号/工号" v-model="account_num4" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号/工号" v-model="account_num4"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password4" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password4">
                                 </div>
                                 <div class="error">
                                     <div class="err">
@@ -532,7 +286,8 @@
                                     </div>
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号" v-model="iphone1" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone1"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
                                     <input type="text" placeholder="请输入真实姓名" v-model="student_name1">
@@ -541,10 +296,10 @@
                                     <input type="number" placeholder="请输入学号" v-model="account_num1">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password1" @blur="pswblur(1)" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password1" @blur="pswblur(1)">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="确认密码" v-model="upassword1" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="确认密码" v-model="upassword1">
                                 </div>
                                 <div id="input1" class="zhu_btn" @click="StudentReg()">
                                     <a href="#">注册</a>
@@ -562,7 +317,8 @@
                                     </div>
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号" v-model="iphone3" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone3"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
                                     <input type="text" placeholder="请输入教师姓名" v-model="teacher_name3">
@@ -571,10 +327,10 @@
                                     <input type="number" placeholder="请输入工号" v-model="account_num3">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password3" @blur="pswblur(0)" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password3" @blur="pswblur(0)">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="确认密码" v-model="upassword3" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="确认密码" v-model="upassword3">
                                 </div>
                                 <div id="input3" class="zhu_btn" @click="TeacherReg">
                                     <a href="#">注册</a>
@@ -599,8 +355,8 @@
 <script src="./js/pub.js"></script>
 <script src="./js/index.js"></script>
 <script>
-    $(document).keydown(function(event){
-        if(event.keyCode==13){
+    $(document).keydown(function (event) {
+        if (event.keyCode == 13) {
             document.getElementById("input1").click();
             document.getElementById("input2").click();
             document.getElementById("input3").click();
@@ -608,4 +364,5 @@
         }
     });
 </script>
+
 </html>

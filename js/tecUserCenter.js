@@ -194,6 +194,7 @@ var app = new Vue({
 
         this.init();
         this.getExperList();
+        this.getQlistPage();
         // console.log(this.actExpItem, this.actExpIndex);
     },
     methods: {
@@ -300,6 +301,8 @@ var app = new Vue({
                                 sessionStorage.removeItem('userInfo');
                                 window.location.href = "../index.html"
                             } else if (res.code == 400) {
+                                _this.$message(res.msg)
+                            } else {
                                 _this.$message(res.msg)
                             }
                         },
@@ -479,33 +482,42 @@ var app = new Vue({
         // 题库提交
         submitQ(row) {
             var _this = this;
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: pub._DetailApi.submitQ,
-                data: {
-                    "question_bank_id": row.question_bank_id
-                },
-                cbk: function (res) {
-                    _this.$confirm('发布成功！您已经可以在创建实验小组时选择该题库作为测试题。', "提示", {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'success',
-                        center: true
-                    }).then(() => {
+            _this.$confirm('确认发布吗？发布成功之后该题库暂不可更改', "提示", {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'success',
+                center: true
+            }).then(() => {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.submitQ,
+                    data: {
+                        "question_bank_id": row.question_bank_id
+                    },
+                    cbk: function (res) {
+                        _this.$message({
+                            message: '发布成功，您可以在实验小组要求中添加该题库',
+                            type: 'success'
+                        })
                         _this.getQlistPage();
-                    }).catch(() => {
-                        _this.getQlistPage();
-                    })
 
-                },
-                cat: function (cat) {
-                    _this.$message({
-                        message: '操作失败',
-                        type: 'info'
-                    })
-                }
+                    },
+                    cat: function (cat) {
+                        _this.$message({
+                            message: '操作失败',
+                            type: 'info'
+                        })
+                    }
 
-            });
+                });
+
+            }).catch(() => {
+                _this.$message({
+                    message: '操作取消',
+                    type: 'info'
+                })
+            })
+
         },
         // 题库标题修改
         editQ(row) {
@@ -565,6 +577,7 @@ var app = new Vue({
                         },
                             _this.testBox.push(_this.testBoxItem)
                     }
+                    editor.html(_this.testBoxItem.question_title)
                     console.log(_this.testBox);
                     _this.viewScore();//查看总分和题量
                 },
@@ -594,7 +607,8 @@ var app = new Vue({
         showTestItem(it) {
             console.log(it);
             this.TestItemIndex = it.question_id;
-            this.testBoxItem = this.testBox[it.question_id - 1]
+            this.testBoxItem = this.testBox[it.question_id - 1];
+            editor.html(this.testBoxItem.question_title)
         },
         // 新增一道题
         addNewOneTest() {
@@ -607,12 +621,14 @@ var app = new Vue({
                 question_type_name: this.TestTypeIndex == 4 ? "简答题" : '',
                 uuid: "",
             };
+            editor.html(this.testBoxItem.question_title)
             this.testBox.push(this.testBoxItem)
             this.TestItemIndex = this.testBoxItem.question_id;
         },
         // 新增选项
         addnewOption() {
-            this.testBoxItem.question_option.push(this.options[this.testBoxItem.question_option.length])
+            // this.testBoxItem.question_option.push(this.options[this.testBoxItem.question_option.length])
+            this.testBoxItem.question_option.push("")
         },
         // 删除选项
         delOption(k) {
@@ -621,7 +637,9 @@ var app = new Vue({
         // 保存完整的一道题
         saveOneTest() {
             var _this = this;
+            _this.testBoxItem.question_title = (editor.html() + "").replace(/"/g, "'")
             var _type = true;
+
             console.log(_this.testBoxItem);
             _type = (_this.testBoxItem.question_type_name == '简答题' ? true : false)
             console.log(_type);
@@ -1101,7 +1119,7 @@ var app = new Vue({
                         "experiment_group_id": row.experiment_group_id
                     },
                     cbk: function (res) {
-                        _this.$confirm('发布成功！实验码：' + res.code, "提示", {
+                        _this.$confirm(`发布成功！实验码: ${res.data}`, "提示", {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'success',
@@ -1287,33 +1305,74 @@ var app = new Vue({
 
         },
         // 给某项要求评分
-        saveReqScore(type) {
+        saveReqScore(item) {
+            if (item.require_status == '1') {
+                this.$message({
+                    message: "此项要求已经评过分了",
+                    type: 'info'
+                })
+                return false
+            }
+            console.log(item)
+            console.log("哈哈哈拦不住我");
             var _this = this;
+            var jiandaScore = 0; //卷子总分
             var json = {
-                "question_bank_id": _this.StuSubmitCont.question_bank_id,
+                "question_bank_id": item.require_type == "2" ? _this.StuSubmitCont.question_bank_id : "",
                 "user_id": _this.StuSubmitCont.user_id,
-                "require_id": type,
+                "require_id": item.require_id,
                 "require_weight": '',
                 "require_score": "",
                 "experiment_group_id": _this.groupId
             };
-            for (let i = 0; i < _this.StuSubmitCont.experiment_require.length; i++) {
-                if (_this.StuSubmitCont.experiment_require[i].require_type == type) {
+            for (var i = 0; i < _this.StuSubmitCont.experiment_require.length; i++) {
+
+                // 如果类型相同并且不是简答题
+                if (_this.StuSubmitCont.experiment_require[i].require_type == item.require_type && item.require_type != "2") {
                     json.require_weight = _this.StuSubmitCont.experiment_require[i].require_weight;
-                    if (type != "2") {
-                        json.require_score = _this.StuSubmitCont.experiment_require[i].require_score;
-                    } else {
-                        json.require_score =
-                            parseInt(_this.StuSubmitCont.judgeScore) +
-                            parseInt(_this.StuSubmitCont.singleChoiceScore) +
-                            parseInt(_this.StuSubmitCont.multipleChoiceScore) +
-                            _this.StuShortAnswer.reduce((prev, curr, idx, arr) => {
-                                return parseInt(prev.theScore) + parseInt(curr.theScore)
-                            })
+                    json.require_score = _this.StuSubmitCont.experiment_require[i].require_score;
+                    // 如果类型相同 是简答
+                } else if (_this.StuSubmitCont.experiment_require[i].require_type == item.require_type && item.require_type == "2") {
+                    json.require_weight = _this.StuSubmitCont.experiment_require[i].require_weight;
+                    console.log(_this.StuShortAnswer);
+                    if (_this.StuShortAnswer.length > 0) {
+                        jiandaScore = _this.StuShortAnswer.reduce((prev, curr, idx, arr) => {
+                            console.log(prev.theScore, "prev.theScore");
+                            console.log(curr.theScore, "curr.theScore");
+                            return (parseInt(prev) + parseInt(curr.theScore))
+                        }, 0)
+                        console.log(typeof (jiandaScore), jiandaScore)
                     }
+                    json.require_score =
+                        parseInt(_this.StuSubmitCont.judgeScore ? _this.StuSubmitCont.judgeScore : "0") +
+                        parseInt(_this.StuSubmitCont.singleChoiceScore ? _this.StuSubmitCont.singleChoiceScore : "0") +
+                        parseInt(_this.StuSubmitCont.multipleChoiceScore ? _this.StuSubmitCont.multipleChoiceScore : "0")
+                        + jiandaScore;
                 }
+                console.log(json);
+                // if (_this.StuSubmitCont.experiment_require[i].require_type == item.require_type) {
+                //     json.require_weight = _this.StuSubmitCont.experiment_require[i].require_weight;
+                //     if (item.require_type != "2") {
+                //         json.require_score = _this.StuSubmitCont.experiment_require[i].require_score;
+                //     } else {
+                //         var jiandaScore = 0;
+                //         console.log(_this.StuShortAnswer)
+                //         if (_this.StuShortAnswer.length > 0) {
+                //             jiandaScore = _this.StuShortAnswer.reduce((prev, curr, idx, arr) => {
+                //                 return parseInt(prev.theScore) + parseInt(curr.theScore)
+                //             })
+                //             console.log(typeof (jiandaScore), jiandaScore)
+                //         }
+                //         console.log("简答分数", jiandaScore)
+                //         json.require_score =
+                //             parseInt(_this.StuSubmitCont.judgeScore ? _this.StuSubmitCont.judgeScore : "0") +
+                //             parseInt(_this.StuSubmitCont.singleChoiceScore ? _this.StuSubmitCont.singleChoiceScore : "0") +
+                //             parseInt(_this.StuSubmitCont.multipleChoiceScore ? _this.StuSubmitCont.multipleChoiceScore : "0")
+                //             + jiandaScore;
+                //         console.log(json.require_score)
+                //     }
+                // }
             }
-            console.log(json);
             // 判空
             if (json.require_score == "") {
                 _this.$message({
@@ -1336,51 +1395,65 @@ var app = new Vue({
                     }
                 });
             }
+        },
+        preStu(bef) {
+            var _this = this;
+            if (!bef) {
+                _this.$message({
+                    message: "没有上一位了",
+                    type: 'info'
+                })
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.selectStu,
+                    data: {
+                        "user_id": _this.StuSubmitCont.before_user_id,
+                        "experiment_group_id": _this.theStudent.experiment_group_id
+                    },
+                    cbk: function (res) {
+                        console.log(res);
+                        _this.StuSubmitCont = res.data;
+                        _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
+                            return Object.assign(item, { theScore: '' })
+                        })
+                        // console.log(_this.StuShortAnswer);
 
+                    },
+                    cat: function (cat) {
+                    }
+                });
+            }
 
         },
-        preStu() {
+        nextStu(aft) {
             var _this = this;
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: pub._DetailApi.selectStu,
-                data: {
-                    "user_id": _this.StuSubmitCont.before_user_id,
-                    "experiment_group_id": _this.theStudent.experiment_group_id
-                },
-                cbk: function (res) {
-                    console.log(res);
-                    _this.StuSubmitCont = res.data;
-                    _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
-                        return Object.assign(item, { theScore: '' })
-                    })
-                    // console.log(_this.StuShortAnswer);
+            if (!aft) {
+                _this.$message({
+                    message: "没有下一位了",
+                    type: 'info'
+                })
+            } else {
+                pub._InitAxios({
+                    _url: pub._url, //公共接口
+                    ur: pub._DetailApi.selectStu,
+                    data: {
+                        "user_id": _this.StuSubmitCont.after_user_id,
+                        "experiment_group_id": _this.theStudent.experiment_group_id
+                    },
+                    cbk: function (res) {
+                        console.log(res);
+                        _this.StuSubmitCont = res.data;
+                        _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
+                            return Object.assign(item, { theScore: '' })
+                        })
+                        // console.log(_this.StuShortAnswer);
+                    },
+                    cat: function (cat) {
+                    }
+                });
+            }
 
-                },
-                cat: function (cat) {
-                }
-            });
-        },
-        nextStu() {
-            var _this = this;
-            pub._InitAxios({
-                _url: pub._url, //公共接口
-                ur: pub._DetailApi.selectStu,
-                data: {
-                    "user_id": _this.StuSubmitCont.after_user_id,
-                    "experiment_group_id": _this.theStudent.experiment_group_id
-                },
-                cbk: function (res) {
-                    console.log(res);
-                    _this.StuSubmitCont = res.data;
-                    _this.StuShortAnswer = res.data.student_answer.map((item, index) => {
-                        return Object.assign(item, { theScore: '' })
-                    })
-                    // console.log(_this.StuShortAnswer);
-                },
-                cat: function (cat) {
-                }
-            });
         },
         handleCommand(com) {
             if (com == "a") {
@@ -1432,7 +1505,8 @@ var app = new Vue({
         showTestList: {
             handler(val) {
                 if (val) {
-                    this.getQlistPage()
+                    this.getQlistPage();
+                    createEditor()
                 }
             },
             immediate: true
@@ -1456,7 +1530,95 @@ var app = new Vue({
         // 给图片路径添加前缀
         addBaseurl: function (val) {
             return val.replace(/^/, baseURL)
+        },
+        // 根据题库id查询题库名
+        getTitle: function (val) {
+            // var _this = this;
+            if (app.Q_list.length > 0) {
+                var allItem = app.Q_list.find((item, index, arr) => {
+                    return (item.question_bank_id == val)
+                })
+                console.log(allItem, 'allitem')
+                return allItem.question_bank_name
+            } else {
+                return ""
+            }
+
         }
     }
 })
 TabChange('.tabbar1', 'tab1_act', '.tab_con1', 'hidden')
+
+function createEditor() {
+    KindEditor.ready(function (K) {
+        window.editor = K.create("#Contents", {
+            /*设置上传接口*/
+            // filePostName: "/kindeditor/fileUpload",
+            formatUploadUrl: false,
+            urlType: "domain",
+            uploadJson: pub._url + pub._DetailApi.editUpload,
+            /*设置按钮*/
+            items: [
+                "source",
+                "|",
+                "undo",
+                "redo",
+                "|",
+                "preview",
+                "print",
+                "template",
+                "code",
+                "cut",
+                "copy",
+                "paste",
+                "plainpaste",
+                "wordpaste",
+                "|",
+                "justifyleft",
+                "justifycenter",
+                "justifyright",
+                "justifyfull",
+                "insertorderedlist",
+                "insertunorderedlist",
+                "indent",
+                "outdent",
+                "subscript",
+                "superscript",
+                "clearhtml",
+                "quickformat",
+                "selectall",
+                "|",
+                "fullscreen",
+                "/",
+                "formatblock",
+                "fontname",
+                "fontsize",
+                "|",
+                "forecolor",
+                "hilitecolor",
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "lineheight",
+                "removeformat",
+                "|",
+                "image",
+                "multiimage",
+                "flash",
+                "media",
+                "insertfile",
+                "table",
+                "hr",
+                "emoticons",
+                "baidumap",
+                "pagebreak",
+                "anchor",
+                "link",
+                "unlink",
+                "|",
+                "about"
+            ]
+        });
+    });
+}

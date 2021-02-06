@@ -245,14 +245,17 @@ ol {
 }
 
 .det_jian{
-    width: 210px;
     height: 70px;
     line-height: 70px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 16px;
 	color: #333333;
 	opacity: 0.6;
+}
+
+.det_jian div:first-child{
+    margin-right: 20px;
 }
 
 .det_cont{
@@ -261,10 +264,36 @@ ol {
 	color: #333333;
 }
 
+.backg{
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #ffffff;
+    background-color: #cccccc;
+    border-radius: 2px;
+    cursor: pointer;
+    margin: 20px 10px;
+}
+
+.backg:hover{
+    background-color:#00b1fb;
+    color: #ffffff;
+}
+
+.backg .hov:hover{
+    color: #00b1fb;
+}
+
 .det_pic{
-    width: 347px;
-    height: 233px;
     margin: 50px 100px 0 0; 
+}
+
+.det_pic video{
+    width: 300px;
+	height: 225px;
+    object-fit: cover;
+    outline: none;
 }
 
 /* list_end */

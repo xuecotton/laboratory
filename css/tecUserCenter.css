@@ -986,7 +986,6 @@ main {
 
 .item_tit {
   width: 800px;
-  height: 46px;
   margin: 10px 0;
   background-color: #f9f9f9;
   border: solid 1px #dddddd;
@@ -1021,8 +1020,8 @@ main {
 
 .item_options .options_con {
   width: 690px;
-  height: 30px;
   border: 1px solid #ddd;
+  margin-bottom: 5px;
 }
 
 .item_options .options_con + div {

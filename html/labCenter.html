@@ -21,14 +21,19 @@
         .el-tabs__item {
             font-size: 18px;
         }
-        .el-select-dropdown{
+
+        .el-select-dropdown {
             z-index: 10000 !important;
+        }
+
+        [v-cloak] {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="body" id="app">
+    <div class="body" id="app" v-cloak>
         <!-- nav_start -->
         <!-- 登录状态 -->
         <header class="nav" v-if="onLogin">
@@ -50,7 +55,8 @@
                 </ul>
                 <div class="search">
                     <label class="input">
-                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称" value="">
+                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称"
+                            value="">
                         <button @click="getExperiment">
                             <span>搜索</span>
                         </button>
@@ -95,7 +101,8 @@
                 </ul>
                 <div class="search">
                     <label class="input">
-                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称" value="">
+                        <input v-model="experiment_name" type="text" maxlength="100" class="Input" placeholder="请输入实验名称"
+                            value="">
                         <button @click="getExperiment">
                             <span>搜索</span>
                         </button>
@@ -115,7 +122,9 @@
             </div>
             <div class="special_list">
                 <ul class="table">
-                    <li class="special_con" @click="spe_active(index,item.category_one_id)" :class="ind_t==index ? 'spe_active' : ''" v-for="(item,index) of titleList" :key="index" v-if="titleList">
+                    <li class="special_con" @click="spe_active(index,item.category_one_id)"
+                        :class="ind_t==index ? 'spe_active' : ''" v-for="(item,index) of titleList" :key="index"
+                        v-if="titleList">
                         {{item.category_one_name}}
                     </li>
                 </ul>
@@ -125,7 +134,8 @@
         <!-- list_start -->
         <div class="con">
             <ul class="list">
-                <li class="list_con" @click="queryDetails(item.experiment_id)" v-for="(item,index) of tabledata" v-if="tabledata">
+                <li class="list_con" @click="queryDetails(item.experiment_id)" v-for="(item,index) of tabledata"
+                    v-if="tabledata">
                     <a href="#" class="link">
                         <div class="img">
                             <img :src="imgurl+item.experiment_pic" alt="">
@@ -153,12 +163,8 @@
         <!-- list_end -->
         <!-- 分页 -->
         <div class="block">
-            <el-pagination 
-                background 
-                @current-change="handleCurrentChange" 
-                :page-size="pageSize" 
-                layout="prev, pager, next" 
-                :total="total">
+            <el-pagination background @current-change="handleCurrentChange" :page-size="pageSize"
+                layout="prev, pager, next" :total="total">
             </el-pagination>
         </div>
         <!-- footer_start -->
@@ -176,10 +182,11 @@
                                 <div class="spa">
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号/学号" v-model="account_num2" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号/学号" v-model="account_num2"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password2" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password2">
                                 </div>
                                 <div class="error">
                                     <div class="err">
@@ -205,10 +212,11 @@
                         <el-tab-pane label="教师" name="second">
                             <div class="log_tea">
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号/工号" v-model="account_num4" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号/工号" v-model="account_num4"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password4" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password4">
                                 </div>
                                 <div class="error">
                                     <div class="err">
@@ -250,19 +258,21 @@
                                     </div>
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号" v-model="iphone1" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone1"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
                                     <input type="text" placeholder="请输入真实姓名" v-model="student_name1">
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入学号" v-model="account_num1">
+                                    <input type="number" placeholder="请输入学号" v-model="account_num1"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password1" @blur="pswblur(1)" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password1" @blur="pswblur(1)">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="确认密码" v-model="upassword1" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="确认密码" v-model="upassword1">
                                 </div>
                                 <div id="input1" class="zhu_btn" @click="StudentReg()">
                                     <a href="#">注册</a>
@@ -280,19 +290,21 @@
                                     </div>
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入手机号" v-model="iphone3" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="number" placeholder="请输入手机号" v-model="iphone3"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
                                     <input type="text" placeholder="请输入教师姓名" v-model="teacher_name3">
                                 </div>
                                 <div class="ipt">
-                                    <input type="number" placeholder="请输入工号" v-model="account_num3">
+                                    <input type="number" placeholder="请输入工号" v-model="account_num3"
+                                        onkeyup="this.value=this.value.replace(/\D/g,'')">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="请输入密码" v-model="password3" @blur="pswblur(0)" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="请输入密码" v-model="password3" @blur="pswblur(0)">
                                 </div>
                                 <div class="ipt">
-                                    <input type="password" placeholder="确认密码" v-model="upassword3" onkeyup="this.value=this.value.replace(/\D/g,'')">
+                                    <input type="password" placeholder="确认密码" v-model="upassword3">
                                 </div>
                                 <div id="input3" class="zhu_btn" @click="TeacherReg">
                                     <a href="#">注册</a>
@@ -317,8 +329,8 @@
 <script src="../js/pub.js"></script>
 <script src="../js/labCenter.js"></script>
 <script>
-    $(document).keydown(function(event){
-        if(event.keyCode==13){
+    $(document).keydown(function (event) {
+        if (event.keyCode == 13) {
             document.getElementById("input1").click();
             document.getElementById("input2").click();
             document.getElementById("input3").click();
@@ -326,4 +338,5 @@
         }
     });
 </script>
+
 </html>

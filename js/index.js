@@ -77,11 +77,11 @@ var app = new Vue({
         //查询实验详情
         queryDetails(experiment_id) {
             this.experiment_id = experiment_id;
-            window.location.href = '../html/labDetails.html?b=' + this.experiment_id;
+            window.location.href = './html/labDetails.html?b=' + this.experiment_id;
         },
         // 搜索框搜索实验
         getExperiment() {
-            window.location.href = '../html/labCenter.html?a=' + encodeURI(this.experiment_name);
+            window.location.href = './html/labCenter.html?a=' + encodeURI(this.experiment_name);
         },
         // 实验分页
         ListPage() {
@@ -91,7 +91,6 @@ var app = new Vue({
                 ur: pub._DetailApi.experimentListPage,//查询学生信息接口
                 data: { "pageSize": _this.pageSize, "pageNum": _this.pageNum },
                 cbk: function cbk(res) {
-                    console.log(res);
                     if (res.stateCode == 200 && res.stateMsg == "success") {
                         _this.tabledata = res.page.list;
                     }
@@ -106,7 +105,6 @@ var app = new Vue({
                 ur: pub._DetailApi.studentInfo,//查询学生信息接口
                 data: { "user_id": _this.user_id },
                 cbk: function cbk(res) {
-                    console.log(res);
                     if (res.code == 200 && res.msg == "success") {
                         _this.head_portrait = baseURL + res.data.head_portrait;
                         _this.student_name = res.data.student_name;
@@ -344,22 +342,22 @@ var app = new Vue({
         handleClick(tab, event) {
         },
         close_d() {
-            window.location.href = '../index.html'
+            window.location.href = './index.html'
         },
         close_z() {
-            window.location.href = '../index.html'
+            window.location.href = './index.html'
         },
         //点击跳转个人中心页面
         handleCommand(command) {
             if (command == 'a' && this.user_type == 'student') {
-                window.location.href = '../html/stuCenter.html?user_id=' + this.user_id;
+                window.location.href = './html/stuCenter.html?user_id=' + this.user_id;
             } else if (command == 'a' && this.user_type == 'teacher') {
-                window.location.href = '../html/user.html?user_id=' + this.user_id;
+                window.location.href = './html/user.html?user_id=' + this.user_id;
             } else {
                 this.user_id = "";
                 this.user_type = "";
                 sessionStorage.clear();
-                window.location.href = '../index.html';
+                window.location.href = './index.html';
             }
         },
         // 点击登录注册

@@ -24,9 +24,13 @@ ol {
 
 html, body, #app{
     min-height: 100%;
+    height: 100%;
 }
 #app{
     position: relative;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
 }
 
 /* 头部开始 */
@@ -219,6 +223,7 @@ html, body, #app{
     color: #9199a1;
     position: absolute;
     bottom: 0;
+    clear: both;
 }
 
 /* banner */

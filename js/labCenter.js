@@ -98,7 +98,6 @@ var app = new Vue({
                 ur: pub._DetailApi.findOneList,//实验中心一级分类列表
                 data: {},
                 cbk: function cbk(res) {
-                    console.log(res);
                     if (res.stateCode == 200 && res.stateMsg == "success") {
                         _this.titleList = res.data;
                         let titleArr = { category_one_id: "", category_one_name: "全部" }
@@ -121,7 +120,6 @@ var app = new Vue({
                 ur: pub._DetailApi.experimentListPage,//首页实验列表分页
                 data: { "pageSize": _this.pageSize, "pageNum": _this.pageNum, "category_one_id": _this.category_one_id, "search_data": _this.experiment_name },
                 cbk: function cbk(res) {
-                    console.log(res);
                     if (res.stateCode == 200 && res.stateMsg == "success") {
                         _this.tabledata = res.page.list;
                         _this.total = res.page.totalCount;

@@ -22,8 +22,7 @@ var app = new Vue({
             question_option1:'', //单选选项
             test_arr2:[],//多选
             test_arr3:[{
-                text: '1.锚杆主要通过将围岩中一定范围岩体的应力状态由单向（或双向）受压转变为三向受压，从而提高其环向抗压强度？',
-                    textarea:''
+                textarea:''
             }],//简答
         },
         // 提交试卷
@@ -189,10 +188,10 @@ var app = new Vue({
              this.student_answer=[this.danXuan,this.duoXuan,this.panDuan,this.jianDa];
              console.log(this.student_answer);
 
-            _this.$confirm('您已成功提交试题！', '提示', {
-                confirmButtonText: '去实验小组详情页',
+            _this.$confirm('你是否提交试卷？', '提示', {
+                confirmButtonText: '确定',
                 cancelButtonText: '取消',
-                type:'success'
+                type:'warning'
             }).then(() => {
                 pub._InitAxios({
                     _url: pub._url, //公共接口
